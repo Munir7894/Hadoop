@@ -1,0 +1,117 @@
+If Hadoop Services are not running; *PIG, *Hive will not run.
+Make sure Hadoop services are running for proper execution.
+
+Hive --> Below servers will be there in Enterprise.
+1)Hive Metastore Server
+2)WebHCat Server
+3)HiveServer2
+
+Hive is a datastore. Hive is a warehouse.
+Hive need jdbc drivers.
+
+Hive  --> audio 0 to 37 Minutes. Video 0 to 48 Minutes.
+Pig	  --> audio 37 to 51 Minutes. Video 48 to 1h 02 Minutes.
+Flume --> audio 51 to 1h 28 Minutes. Video 1h 02 to 1h 39 Minutes
+
+		################	To Match the audio and video timing		#######################
+
+1) Run the video 10 Minutes 50 Seconds and then start Audio.
+
+2) before audio, single Node Cluster is installed and services are started.
+
+3) Download and Open Server Log Data Analysis file.
+
+4) Download the data.(name is eventlog.log)
+
+5) Copy data to Hadoop Cluster by copyFromLocal command, and named it serverlog.log
+
+6) Now you need Hive. it is not installed, so install it. After installation.
+
+
+					****** Hive Installation *****
+
+1) Open Hive Installation Documentation.
+
+2) Hive 1 is for Hadoop 1,(Compatible) 
+   Hive 2 is for Hadoop 2 (Compatible)
+   
+3) Install Hive 1 as we are using Hadoop 1.
+  i)  wget http://www.eu.apache.org/dist/hive/hive-1.2.1/apache-hive-1.2.1-bin.tar.gz (to download)
+  ii) tar -zxf apache-hive-1.2.1-bin.tar.gz (untar downloaded file)
+  iii)sudo mv apache-hive-1.2.1-bin /usr/local/hive (move to /usr/local)
+  iv) make appropriate entries of hive environment variables in bashrc (set environment variable of hive in bashrc)
+	
+	export HIVE_HOME=/usr/local/hive
+	export PATH=$PATH:$HIVE_HOME/bin
+	export CLASSPATH=$CLASSPATH:/usr/local/hadoop/lib/*
+	export CLASSPATH=$CLASSPATH:/usr/local/hive/lib/*
+	export CLASSPATH=$CLASSPATH:/usr/local/hive/jdbc/*
+
+  v)  copy hive environment file from template (cp hive-env.sh.template hive-env.sh)
+  vi) set hive environment file (let hive know where is hadoop)(export HADOOP_HOME=/usr/local/hadoop)
+ 
+ 4) Hive is now installed and configured.
+ 
+ 5) type hive to connect to hive 
+    i)  it connects first to jdbc.
+	ii) it will show an error while starting hive.(FS is closed, it needs permissions)(current permission for /tmp was 711)
+	    this /tmp is of hadoop cluster not linux.
+	iii)give permission to /tmp FS (hadoop fs -chmod -R 777 /tmp)
+	iv) fire hive command and now it is connected to hive.
+	
+				****** Hive Installation Completed *****
+
+				#####  HIVE Commands  #####
+7) i)Create database server;(database named server is created)
+  ii)show databases; (it will show 1 default database and 1 server database which is created now.)
+ iii)Use server;(Use database named server)
+  iV)create table serverdata (time STRING, ip STRING, country STRING, status STRING)
+     ROW FORMAT DELIMITED FIELDS TERMINATED BY '|' LOCATION '/user/ubuntu/'; (serverdata table is created with 4 fields)
+   v)***Fire all the hive commands one by one and see the data.***
+   
+   select * from serverdata limit 10;
+   SELECT * FROM serverdata where country = "IN" LIMIT 5;
+   select * from serverdata where country = "GB" ;
+   select * from serverdata where country = "IN" AND status = "ERROR";
+   SELECT ip, time FROM Serverdata;
+   SELECT DISTINCT  ip, time from serverdata;
+   SELECT DISTINCT  ip from serverdata;
+   
+
+					****** Pig *****
+				
+* Default mode of Pig is Map Reduce Mode.
+
+				****** Pig Installation *****
+				
+  1)Download Pig 
+	wget http://www-us.apache.org/dist/pig/latest/pig-0.16.0.tar.gz
+	
+  2)Untar Pig
+	tar -zxvf pig-0.16.0.tar.gz
+	
+  3)Install Pig
+	sudo mv pig-0.16.0 /usr/local/pig
+
+  4)Set Environment Variables
+	export PIG_HOME=/usr/local/pig/
+	export PATH=$PATH:$PIG_HOME/bin
+			
+			****** Pig Installation Completed *****
+			
+			#########	PIG Execution	#########
+
+I)  lines = LOAD '/user/ubuntu/serverlog.log' AS (line:chararray);   -->  to Load data (all lines in serverlog.log will be added) 
+																		  (make sure this data is there on Hadoop cluster).
+
+II) words = FOREACH lines GENERATE FLATTEN(TOKENIZE(line)) as word;  -->  it will load on RAM unless and untill you use command DUMP.
+
+III)grouped = GROUP words BY word;									 -->  this will group word by word.
+
+IV) wordcount = FOREACH grouped GENERATE group, COUNT(words);		 -->  it is Reduce, what you grouped it will generate a group and count
+																		  the   word.
+V)  DUMP wordcount													 -->  it will get job_id, map reduce job will be started.
+
+No need to write Map Reduce Program(jar file).
+80% work done on Pig.
+After data processing, data will be loaded in Hive and we query to that data.
