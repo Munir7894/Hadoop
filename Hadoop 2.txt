@@ -1,0 +1,761 @@
+Prepare a single Node
+
+sudo apt-get update
+sudo apt-get upgrade
+
+#Do not Upload key from Local Machine to ubuntu instance, 
+
+
+***************** Install Java 8	*****************
+4 types of JDK
+1)OpenJDK
+2)Oracle JDK
+3)IBM JDK
+4)Azul JDK
+
+#Oracle JDK 9 is latest but 8 is stable so We will use Oracle JDK 8 in this case.
+
+#Install Oracle JDK.
+sudo apt-get install -y oracle-java8-installer
+
+*it will show an error message "Unable to locate Package".
+Because Oracle JDK is not there in repository of instance(server), 
+if you want to fetch some data(Oracle JDK) from oracle's server you need Oracle's key.
+
+#Import the key and add it in repository
+sudo add-apt-repository -y ppa:webupd8team/java
+
+#Now try to Install Oracle JDK. 
+sudo apt-get install -y oracle-java8-installer
+
+*It will again show an error message "Unable to locate Package".
+
+!!!!! You added key in repository but didn't update the repository with server. So Update the repository. !!!!!
+
+sudo apt-get update
+
+#Now try to Install Oracle JDK.
+sudo apt-get install -y oracle-java8-installer
+
+*NOW We are trying to download Package(Oracle JDK) from Oracle's Server but it is not allowing.
+
+!!!!!	It is suggesting to Accept Terms & Conditions.	!!!!!
+
+#Below command will accept terms and condition(In case you are trying to install JDK on so many servers).
+echo "oracle-java8-installer shared/accepted-oracle-license-v1-1 select true" | sudo debconf-set-selections
+(just like automation)
+
+# Install Python utility
+sudo apt-get install -y python-software-properties debconf-utils
+** these 2 packages will be installed --> debconf-utils python-software-properties
+
+
+##############	Exact Steps to Install Oracle JDK	##############
+sudo apt-get install -y python-software-properties debconf-utils
+sudo add-apt-repository -y ppa:webupd8team/java
+sudo apt-get update
+echo "oracle-java8-installer shared/accepted-oracle-license-v1-1 select true" | sudo debconf-set-selections
+sudo apt-get install -y oracle-java8-installer
+##############	Oracle JDK installation Completed	##############
+
+# Install Hadoop
+
+**********************************************************************************************************************************
+****	Apache Hadoop's 2.6.5 is a Stable Version.(you can check on hadoop.apache.org/releases.html)						  ****
+****	APache Hadoop 2.7.3 is Latest but still not declared as Stable. 													  ****
+****	Apache Hadoop 3.0.0 is in Alfa state from Septemmber 2016.(It will take at least 1 Year for stable version)			  ****
+****	Most of Production Clusters are running on 2.6 version.																  ****
+**********************************************************************************************************************************
+Interview Question
+Q.Which Version you are working on
+A.Latest is 2.7 but we don't use that. We use Most Contributed 2.6.5 
+(Most Contributed-->Most of the Production clusters are running on 2.6, so it gets contribution from all over the world)
+
+# Download Hadoop
+wget http://apache.mirrors.tds.net/hadoop/common/hadoop-2.7.2/hadoop-2.7.2.tar.gz -P ~/Downloads
+*Hadoop 2.7 tarball is downloaded and puted in ~/Downloads directory
+
+#Untar tarball(Hadoop)
+sudo tar zxvf ~/Downloads/hadoop-* -C /usr/local
+**Untar hadoop and Untar location is /usr/local
+
+#Activating Hadoop(Moving/Renaming Hadoop)
+sudo mv /usr/local/hadoop-* /usr/local/hadoop
+
+#To know Path of Java
+readlink -f $(which java)
+*above command will show path of bin where java is located.
+
+
+# Set Enviornment Variable
+cat >>$HOME/.bashrc <<EOL
+# -- HADOOP ENVIRONMENT VARIABLES START -- #
+export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+export HADOOP_HOME=/usr/local/hadoop
+export PATH=\$PATH:\$HADOOP_HOME/bin
+export PATH=\$PATH:\$HADOOP_HOME/sbin
+export PATH=\$PATH:/usr/local/hadoop/bin/
+export HADOOP_MAPRED_HOME=\$HADOOP_HOME
+export HADOOP_COMMON_HOME=\$HADOOP_HOME
+export HADOOP_HDFS_HOME=\$HADOOP_HOME
+export YARN_HOME=\$HADOOP_HOME
+export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
+export PDSH_RCMD_TYPE=ssh
+# -- HADOOP ENVIRONMENT VARIABLES END -- #
+EOL
+
+#Execute Bash
+bash or exec bash
+*to load recently added parameters.
+
+#Change ownership to ubuntu user.
+sudo chown -R ubuntu:ubuntu /usr/local/hadoop
+
+
+#Update hadoop-env.sh
+sudo su -c 'echo export JAVA_HOME=/usr/lib/jvm/java-8-oracle >> /usr/local/hadoop/etc/hadoop/hadoop-env.sh'
+*Java Home Path is set in Hadoop Environment File.
+
+sudo su -c 'echo export HADOOP_LOG_DIR=/var/log/hadoop/ >> /usr/local/hadoop/etc/hadoop/hadoop-env.sh'
+*Hadoop Log Directory is set in Hadoop Environment File. Our logs will be stored in this direcory.
+
+sudo mkdir /var/log/hadoop/
+*/var/log/hadoop directory is created on linux FS.
+
+#Change ownership to ubuntu user.
+sudo chown ubuntu:ubuntu -R /var/log/hadoop
+** If we do not change ownership, then Hadoop will not be able to write logs in this directory.
+
+================================ Pre-requisities ================================ 
+I)  Disable SELINUX
+II) Disable IPV6
+III)Disable IPTables Firewall 
+IV) Disable Hugepage (Transparent Hugepage Compaction)
+V)  Swappiness
+VI) NTP
+VII)Root Reserved Space
+================================================================================== 
+I) SELinux
+
+!!!!!!!!!!!	SELinux is by-default enabled in Redhat Flavours. !!!!!!!!!!!
+!!!!!!!!!!!	In Ubuntu it(SELinux) is by-default disabled.	  !!!!!!!!!!!
+# Disable SELINUX
+ 
+#Install SELinux utility.
+sudo apt-get install selinux-utils
+
+#check status of SELinux(by-default it is disabled)
+setenforce 0
+**Output--> setenforce: SELinux is disabled.
+
+######## Below 3 lines we need to set in /etc/selinux/config directory, if we have RedHat or CentOS.
+		 At now we have Ubuntu, so no need to configure.
+		 
+cat /etc/selinux/config
+
+SELINUX=disabled
+SELINUXTYPE=targeted
+SETLOCALDEFS=0
+-------------------------------------------------------------------------------------
+II)IPV6
+
+#Disable IPV6 
+
+#check status of IPV6
+cat /proc/sys/net/ipv6/conf/all/disable_ipv6
+**Output-->0
+0 means success, so it is enabled. we have to disable it(make it 1 from 0).
+
+sysctl--> it allows you to change the kernel parameter.
+
+# To disable IPV6
+sudo su -c 'cat >>/etc/sysctl.conf <<EOL
+net.ipv6.conf.all.disable_ipv6 =1
+net.ipv6.conf.default.disable_ipv6 =1
+net.ipv6.conf.lo.disable_ipv6 =1
+EOL'
+
+#check status of IPV6
+cat /proc/sys/net/ipv6/conf/all/disable_ipv6
+**it still shows 0(enabled)
+
+sysctl is configuration file. 
+Reload sysctl(config file) on RAM
+
+sudo sysctl -p 
+
+#check status of IPV6
+cat /proc/sys/net/ipv6/conf/all/disable_ipv6
+**NOW it will shows 1(disabled)
+
+-------------------------------------------------------------------------------------
+III)Disable IP Tables
+Most secured OS is Redhat.
+There are 2 Firewalls.
+1)Internal(Ip Tables)
+2)External(squids)
+We do not configure squids as it is handled by network team.
+
+To Put a firewall for internal threat.
+
+#Disable FireWall iptables
+
+#To Check the Firewall rules.
+sudo iptables -L -n -v 
+**In our case Incoming traffic Outgoing traffic rules are not set.
+
+#Backup of Ip Tables (Firewall Rules)
+sudo iptables-save > firewall.rules 
+
+The Uncomplicated Firewall or ufw is the configuration tool for iptables
+that comes by default on Ubuntu(ufw is not in RedHat, Redhat has different Firewall)
+
+sudo ufw status verbose 
+
+sudo ufw status verbose
+-------------------------------------------------------------------------------------
+IV)Hugepage (Transparent Hugepage Compaction)
+
+#Disabling Transparent Hugepage Compaction
+Hugepage--> it does defragmentation In free time(idle time)
+Defragmentation--> To keep files in a proper Index.
+
+It increase the space and give it to us for use.
+OS writes links in index file about actual data stored in HDD.
+
+Disable Hugepage is important because
+OS writes links in index file about actual data stored in HDD.
+e.g. A particular file's block information is written at single location then
+its very easy to read that information. 
+In Result Speed will be increased as OS will read information from one point.
+
+In free(idle) time Linux will run Defragmentation, it use Processing power as well as Resources.
+Hadoop data is stored in blocks(inodes), there are chances that it will corrupt as the metadata is not updated. 
+Metadata has to be updated every time. 
+System will update this, but it takes some time.
+During this if you try to process the data it will through an Error and we cannot identify the Error.
+>>>>>>>>>>>>>>>>>>>As this error can be Mix of JAVA and LINUX.<<<<<<<<<<<<<<<<<<<<<<<<<
+It is also known as Split Brain Situation. To avoid split brain situation we disable Hugepage.
+
+****************At this Point Solution is to DISABLE HUGEPAGE****************
+
+#Red Hat/CentOS: /sys/kernel/mm/redhat_transparent_hugepage/defrag
+
+#Ubuntu/Debian, OEL, SLES: /sys/kernel/mm/transparent_hugepage/defrag
+
+#To check current status of defragmentation.
+cat /sys/kernel/mm/transparent_hugepage/defrag
+Output-->
+[always] madvice never
+*Always Do Defragmentation.
+
+#In /etc/rc.local file exit 0 is already written, make sure that you remove that exit 0 first or fire below command to remove exit 0.
+sudo sed -i '/exit 0/d' /etc/rc.local
+*exit 0 will be removed from /etc/rc.local
+
+#Now fire below command to Disable defragmentation.
+sudo su -c 'cat >>/etc/rc.local <<EOL
+if test -f /sys/kernel/mm/transparent_hugepage/enabled; then
+  echo never > /sys/kernel/mm/transparent_hugepage/enabled
+fi
+if test -f /sys/kernel/mm/transparent_hugepage/defrag; then
+   echo never > /sys/kernel/mm/transparent_hugepage/defrag 
+fi
+exit 0
+EOL'
+
+#Switch to root user
+sudo -i
+
+#Execute rc.local file 
+source /etc/rc.local
+
+#Now check status of defragmentation.
+cat /sys/kernel/mm/transparent_hugepage/defrag
+Output-->
+always madvice [never]
+*Never Do Defragmentation.
+-------------------------------------------------------------------------------------
+V)Swappiness
+
+vm means vm linus or vm linux.
+When Kernel loads on RAM, boot processing is done, first POST then MBR then Kernel.
+Kernel is loaded by boot loader. Kernel name is vm linus.
+
+# Set Swappiness
+
+# Check swappiness in kernel
+sudo sysctl -a | grep vm.swappiness
+*at current state swappiness is 60.
+We have Sufficient RAM.
+If our swappiness is 0 then we will get very good speed while processing, but all the data will be on RAM so we need More(Huge) RAM. so no need of swappiness.
+
+#We will decrease swappiness to 0 by updating in sysctl.conf.
+sudo su -c 'cat >>/etc/sysctl.conf <<EOL
+'vm.swappiness=0'
+EOL'
+
+#to check kernel parameters which we changed at runtime.
+sudo sysctl -p
+-------------------------------------------------------------------------------------
+VI) Configure NTP Server(Network Transport Protocol)
+For Time Synchronization we configure NTP Server.
+UTC-->Universal Time Coordinated
+UTC is used to cover leap year(1 extra day in every 4 years)
+
+***********There is no Leap Year in UTC ***********
+
+Namenode get HeartBeat Signal from DataNode every 3 seconds.
+Both has different timestamp, so there won't be any co-relation between both.
+It will be problem for metadata
+
+#to check current status of date & time
+timedatectl status
+Output-->
+Local Time:
+Universal Time:
+Timezone:
+NTP enabled:
+NTP synchronized:
+RTC in local TZ:
+DST active:
+
+*RTC--> Real Time Clock.(battery which is on MotherBoard of a server)
+*DST-->Day Light Saving 
+
+#To check the list of TimeZone(Cities all over the world)
+timedatectl list-timezones
+*It will show 424 cities of the world. 
+Sun rises at first in this city of specific country.
+
+#We will check for our timezone.
+timedatectl list-timezones | grep Asia/Kolkata
+
+#To set timezone as Asia/Kolkata(because we are in India)
+sudo timedatectl set-timezone Asia/Kolkata
+
+#to check current status of Date, Time, TimeZone, etc.
+timedatectl status
+*i)Local Time is changed to IST.
+*ii)Timezone is changed to Asia/Kolkata (IST,+0530)
+
+sudo ntpq -p
+Output--> Command Not Found. Because it is not installed.
+
+#Install NTP
+sudo apt-get install ntp
+* NTP will start synchronizing now with NTP Server.
+output-->NTP synchronised: yes
+
+#To check from which and how many servers we are getting time
+sudo ntpq -p
+*it will show IP addresses also.
+
+timedatectl status
+
+sudo nano /etc/ntp.conf
+
+-------------------------------------------------------------------------------------
+VII)Root Reserved Space
+Root keep 5% space for itself(root).
+On one Node there maybe 4 or 8 HDDs, for calculation purpose suppose 4 HDD in a Node.
+1 HDD is of 1TB. it means 4 HDDs are 4TB. 
+5% of 4TB is 200GB.
+Suppose we have 10 Node Cluster then Root Reserved Space on all nodes will be 2TB.
+
+We need to reserve 30% space for Intermediate DATA.
+
+so We have to take back that 5% space from Root, we don't want to give that space.
+make it 0.
+===========================================================
+Conclusion-->
+We have to create a DFS space from Root Reserved Space(Non DFS Space).   
+
+===========================================================
+
+mkfs.ext4 -m 0 /dev/xvda1 ( filesystem is not suppose to be mounted)
+
+#to check which details of File System--> type,UUID,volume name,etc.
+sudo file -sL /dev/xvda1
+now its ext4 type.
+
+#to list block details (path)
+lsblk
+
+#to list Hardware details(this command is Device Manager of Linux).
+lshw
+
+#to list CPU details(whether its a virtual machine or Physical machine)
+lscpu
+
+#to make Root Reserved Space 0(before this it was 5)
+sudo tune2fs -m 0 /dev/xvda1
+*to make it 5 again fire same command put 5 instead of 0.
+
+**Interview Related 			##########################
+Most frequently asked Question 
+whether a JBOD configuration, RAID configuration, or LVM configuration is required? 
+The entire Hadoop ecosystem was created with a JBOD configuration in mind. 
+HDFS is an immutable filesystem that was designed for large file sizes with long sequential reads. 
+This goal plays well with stand-alone SATA drives, as they get the best performance with sequential reads.
+In summary, whereas RAID is typically used to add redundancy to an existing system, HDFS already has that built in.
+In fact, using a RAID system with Hadoop can negatively affect performance.
+For the same reasons, configuring your Hadoop drives under LVM is neither necessary nor recommended.
+
+								##########################
+
+================================ Pre-requisites Completed================================ 
+
+
+##Configure SSH Password less logins 
+
+#We Can Configure Password less logins in 2 ways. Both the configurations are valid.
+For Large Cluster, it is very lengthy process to configure by Option 2.
+In Option 1, there is no need to establish to&fro communication between nodes.
+
+Option 1
+
+sudo su -c touch /home/ubuntu/.ssh/config; echo -e \ "Host *\n StrictHostKeyChecking no\n  UserKnownHostsFile=/dev/null" \ > ~/.ssh/config
+*creating config file in .ssh folder and adding 2 components
+ StrictHostKeyChecking with no parameter(only in a same network, outside network it will check) and
+ KnownHostFile null(it won't ask to make an entry in known_hosts file)
+ 
+# to create a keygen  
+echo -e  'y\n'| ssh-keygen -t rsa -P "" -f $HOME/.ssh/id_rsa
+* to create a keygen of type rsa, Passphrase is Null and it will store file in id_rsa
+
+# Copy Key in authorized_keys
+cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+*copying created key in authorized_keys file
+
+#restart service
+sudo service ssh restart
+*restarting ssh service so that changed configuration will take place.
+ssh localhost
+
+	********************	OR		********************
+Option 2
+
+touch ~/.ssh/config
+
+#
+Host nn
+  HostName ip-172-31-10-128.ap-south-1.compute.internal
+  User ubuntu
+  IdentityFile ~/.ssh/jinga.pem
+#
+Host rm
+  HostName ip-172-31-10-150.ap-south-1.compute.internal
+  User ubuntu
+  IdentityFile ~/.ssh/jinga.pem
+#
+Host dn
+  HostName ip-172-31-10-46.ap-south-1.compute.internal
+  User ubuntu
+  IdentityFile ~/.ssh/jinga.pem
+ ssh nn
+ scp ~/.ssh/config nn:~/.ssh
+ scp ~/.ssh/config dn:~/.ssh
+ scp ~/.ssh/config rm:~/.ssh
+ssh nn 'cat >> ~/.ssh/authorized_keys' < ~/.ssh/id_rsa.pub
+ssh rm 'cat >> ~/.ssh/authorized_keys' < ~/.ssh/id_rsa.pub
+ssh dn 'cat >> ~/.ssh/authorized_keys' < ~/.ssh/id_rsa.pub
+ssh dn
+exit
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Still this point On Node
+1)Installed Enterprise JDK
+2)Installed Hadoop 
+3)Activated Hadoop
+4)Set Environment Variables
+5)Done with Pre-requisites
+6)Configured Password less login
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#CREATE SNAPSHOT AT THIS POINT.(all above mentioned will be there in snapshot)
+
+Go to Actions-->Image-->Create Image
+Image Name --> as your wish.
+Image Description--> for your understanding
+
+No Reboot--> If you select No Reboot Option.
+it won't reboot node and snapshot will taken.(this process take some time)
+
+If you didn't select
+It will reboot the node and snapshot will be taken(this is fast process as it down the node and take the image and UP the node)
+
+########################Points to Remember########################
+
+AMI--> Amazon Machine Image(its like a DVD)
+AMI can be Public and Private.
+We Can Identify it in AMI's Visibility tab whether it is Private or Public.
+If we create an AMI and keep on aws, so it will accessible for all AWS users. this is Public AMI.
+If we create an AMI and keep for our internal Use. this is Private AMI.
+
+******We create AMI with the help of snapshot, not with the help of volume(HDD)
+******We can deploy with the help of Image(AMI) and We will restore with the help of Snapshot.
+
+Volume-->volume means Storage(HDD)
+
+
+
+
+########################################################################
+
+#Configure Hosts file
+sudo nano /etc/hosts and include these lines:FQDN
+127.0.0.1 localhost
+172.31.30.102  ip-172-31-30-102.ap-south-1.compute.internal nn
+172.31.23.4  	ip-172-31-23-4.ap-south-1.compute.internal rm
+172.31.23.3  ip-172-31-23-3.ap-south-1.compute.internal dn
+
+Configure Hosts file on all the servers.
+
+***In our case Hosts file contains 
+1)Private IP address 
+2)Private DNS
+3)Alias Name for the Node whichever we set.
+
+What is FQDN(Fully Qualified Domain Name)
+FQDN has 3 components
+1)IP Address
+2)DNS Address
+3)Hostname
+
+DNS and Hostname is Best Practise.
+
+````````````````````````````````````````````````````````````````````````````````````
+# Configure pdsh
+PDSH-->Parralel Distributed Shell
+
+#to install pdsh on Node
+sudo apt-get install pdsh -y
+
+#Configure hostnames in pdsh.
+sudo nano /etc/genders
+* make sure you make an entry of Hostname which you make in Hosts file.
+
+#to pdsh type(in our case, we already done it in bash file)
+export PDSH_RCMD_TYPE=ssh
+
+#to check uptime on all the servers.
+pdsh -a uptime
+
+````````````````````````````````````````````````````````````````````````````````````
+#to know FQDN
+hostname -f
+*it will print Private DNS 
+
+#to know actual Hostname
+hostname
+
+#where Hostname is defined
+/etc/hostname
+*to change hostname permanently, we simply need to change in /etc/hostname file
+
+
+#Configure slave machines in your cluster.
+nano /usr/local/hadoop/etc/hadoop/slaves
+* make entry of slave machines.
+
+``````````````````````````````````````````````````````````````````````````````````````
+
+#Update core-site.xml
+
+#to remove <configuration> and </configuration> from file.
+sudo sed -i '/<configuration>/,/<\/configuration>/d' /usr/local/hadoop/etc/hadoop/core-site.xml
+
+#to add configuration in core-site.xml
+
+sudo su -c 'cat >> /usr/local/hadoop/etc/hadoop/core-site.xml <<EOL
+<configuration>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://nn:9000</value>
+  </property>
+</configuration>
+
+EOL'
+
+** nn is written because, we configured NameNode on nn. 
+   we configure nn in /etc/hosts, so nn. 
+   
+
+   
+   $$$$$$$$$$$$$$$$$$$$	Point to Remember	$$$$$$$$$$$$$$$$$$$$
+hdfs-site.xml file's configuration is different on NameNode and DataNode.
+
+#Update hdfs-site.xml on name node 
+
+#create a namenode directory
+mkdir -p /usr/local/hadoop/data/hdfs/namenode
+
+#to remove <configuration> and </configuration> from file.
+sudo sed -i '/<configuration>/,/<\/configuration>/d' /usr/local/hadoop/etc/hadoop/hdfs-site.xml
+
+#to add configuration in hdfs-site.xml
+sudo su -c 'cat >>/usr/local/hadoop/etc/hadoop/hdfs-site.xml <<EOL
+<configuration>
+  <property>
+    <name>dfs.replication</name>
+    <value>3</value>
+  </property>
+  <property>
+    <name>dfs.namenode.name.dir</name>
+    <value>file:///usr/local/hadoop/data/hdfs/namenode</value>
+  </property>
+</configuration>
+EOL'
+
+** we define replication factor, by default it is 3, in case if we want to change it, 
+   we will make changes in this file. 
+   
+######### Configure hdfs-site.xml on DataNodes	#########
+
+ssh dn
+
+#Update hdfs-site.xml on datanode
+
+#Create directory for datanode
+mkdir -p /usr/local/hadoop/data/hdfs/datanode
+
+#to remove <configuration> and </configuration> from file.
+sudo sed -i '/<configuration>/,/<\/configuration>/d' /usr/local/hadoop/etc/hadoop/hdfs-site.xml
+
+#to add configuration in hdfs-site.xml
+sudo su -c 'cat >>/usr/local/hadoop/etc/hadoop/hdfs-site.xml <<EOL
+<configuration>
+  <property>
+    <name>dfs.replication</name>
+    <value>3</value>
+  </property>
+  <property>
+    <name>dfs.datanode.name.dir</name>
+    <value>file:///usr/local/hadoop/data/hdfs/datanode</value>
+  </property>
+</configuration>
+EOL'
+
+exit 
+
+
+
+#Update yarn-site.xml
+
+#to remove <configuration> and </configuration> from file.
+sudo sed -i '/<configuration>/,/<\/configuration>/d' /usr/local/hadoop/etc/hadoop/yarn-site.xml
+
+#to add configuration in yarn-site.xml
+sudo su -c 'cat >>/usr/local/hadoop/etc/hadoop/yarn-site.xml <<EOL
+
+<configuration>
+<!-- Site specific YARN configuration properties -->
+  <property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>mapreduce_shuffle</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.hostname</name>
+    <value>rm</value>
+  </property>
+</configuration>
+EOL'
+
+** We provide value as hostname of Resource Manager(rm)
+
+
+#Update mapred-site.xml
+
+#Copy from template
+cp  /usr/local/hadoop/etc/hadoop/mapred-site.xml.template /usr/local/hadoop/etc/hadoop/mapred-site.xml
+
+#to remove <configuration> and </configuration> from file.
+sudo sed -i '/<configuration>/,/<\/configuration>/d' /usr/local/hadoop/etc/hadoop/mapred-site.xml
+
+#to add configuration in mapred-site.xml
+sudo su -c 'cat >>/usr/local/hadoop/etc/hadoop/mapred-site.xml <<EOL
+<configuration>
+  <property>
+    <name>mapreduce.jobtracker.address</name>
+    <value>rm:54311</value>
+  </property>
+  <property>
+    <name>mapreduce.framework.name</name>
+    <value>yarn</value>
+  </property>
+</configuration>
+EOL'
+
+
+#Change ownership of $HADOOP_HOME directory to ubuntu user.
+sudo chown -R ubuntu:ubuntu $HADOOP_HOME
+** we perform some operations with super user(sudo) command, by this home directory is under control 
+   of Root, we change it to ubuntu user.
+   
+
+#SCP all the files (core-site.xml, mapred-site.xml, yarn-site.xml slaves) to all dn and rm.
+
+cd /usr/local/hadoop/etc/hadoop && scp core-site.xml mapred-site.xml yarn-site.xml slaves dn:/usr/local/hadoop/etc/hadoop
+
+#Go to dn(datanode) and copy hdfs-site.xml file to all the DataNodes.
+
+**************************************************************************************************
+#Format Namenode
+
+#make sure you are on NameNode
+hdfs namenode -format
+
+LOOK FOR ERROR Message namenode has been successfully formatted.
+
+#start physical services
+start-dfs.sh
+
+#to start Job History Server
+$HADOOP_HOME/sbin/mr-jobhistory-daemon.sh start historyserver
+
+#To start Yarn 
+ssh rm
+
+start-yarn.sh
+
+************************************************************************************************
+
+####################Bechmarking####################
+pdsh -a jps
+pdsh -w dn jps
+pdsh -w rm jps
+pdsh -w nn jps
+pdsh -a (press enter)
+pdsh>> ls
+hdfs dfs -mkdir /user
+hdfs dfs -mkdir /user/ubuntu
+hadoop jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar teragen 500000 random-data
+hadoop jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar terasort random-data sorted-data
+hadoop jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-*-tests.jar TestDFSIO -write -nrFiles 10 -fileSize 5MB
+hadoop jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-*-tests.jar TestDFSIO -read -nrFiles 10 -fileSize 5MB
+
+NameNode 
+http://nn_host:port/ 
+Default HTTP port is 50070. 
+ResourceManager 
+http://rm_host:port/ 
+Default HTTP port is 8088. 
+MapReduce JobHistory Server 
+http://jhs_host:port/ 
+Default HTTP port is 19888. 
+
+
+SecondaryNameNode 
+http://snn_host:port/ 
+Default HTTP port is 50090
+DataNode
+http://dn_host:port/ 
+Default HTTP port is 50075. 
+
+http://jhs_host:port/ 
+Default HTTP port is 19888. 
+
+hadoop jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar pi 10 100000
+
+
