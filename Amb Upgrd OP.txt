@@ -1,0 +1,540 @@
+[root@ip-172-31-13-128 yum.repos.d]# yum upgrade ambari-server
+Loaded plugins: amazon-id, rhui-lb, search-disabled-repos
+HDP-2.5.3.0                                                                                                                                      | 2.9 kB  00:00:00
+HDP-UTILS-1.1.0.21                                                                                                                               | 2.9 kB  00:00:00
+ambari-2.5.2.0                                                                                                                                   | 2.9 kB  00:00:00
+rhui-REGION-client-config-server-7                                                                                                               | 2.9 kB  00:00:00
+rhui-REGION-rhel-server-releases                                                                                                                 | 3.5 kB  00:00:00
+rhui-REGION-rhel-server-rh-common                                                                                                                | 3.8 kB  00:00:00
+(1/10): HDP-2.5.3.0/primary_db                                                                                                                   |  67 kB  00:00:00
+(2/10): HDP-UTILS-1.1.0.21/primary_db                                                                                                            |  37 kB  00:00:00
+(3/10): ambari-2.5.2.0/primary_db                                                                                                                | 8.7 kB  00:00:00
+(4/10): rhui-REGION-client-config-server-7/x86_64/primary_db                                                                                     | 3.3 kB  00:00:00
+(5/10): rhui-REGION-rhel-server-releases/7Server/x86_64/group                                                                                    | 709 kB  00:00:00
+(6/10): rhui-REGION-rhel-server-releases/7Server/x86_64/updateinfo                                                                               | 2.4 MB  00:00:00
+(7/10): rhui-REGION-rhel-server-rh-common/7Server/x86_64/group                                                                                   |  104 B  00:00:00
+(8/10): rhui-REGION-rhel-server-rh-common/7Server/x86_64/updateinfo                                                                              |  33 kB  00:00:00
+(9/10): rhui-REGION-rhel-server-rh-common/7Server/x86_64/primary_db                                                                              | 120 kB  00:00:00
+(10/10): rhui-REGION-rhel-server-releases/7Server/x86_64/primary_db                                                                              |  45 MB  00:00:00
+Resolving Dependencies
+--> Running transaction check
+---> Package ambari-server.x86_64 0:2.4.2.0-136 will be updated
+---> Package ambari-server.x86_64 0:2.5.2.0-298 will be an update
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+========================================================================================================================================================================
+ Package                                   Arch                               Version                                  Repository                                  Size
+========================================================================================================================================================================
+Updating:
+ ambari-server                             x86_64                             2.5.2.0-298                              ambari-2.5.2.0                             716 M
+
+Transaction Summary
+========================================================================================================================================================================
+Upgrade  1 Package
+
+Total download size: 716 M
+Is this ok [y/d/N]: y
+Downloading packages:
+Delta RPMs disabled because /usr/bin/applydeltarpm not installed.
+ambari-server-2.5.2.0-298.x86_64.rpm                                                                                                             | 716 MB  00:00:13
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+Backing up Ambari properties /etc/ambari-server/conf/ambari.properties -> /etc/ambari-server/conf/ambari.properties.rpmsave
+Backing up Ambari properties /var/lib/ambari-server/ambari-env.sh -> /var/lib/ambari-server/ambari-env.sh.rpmsave
+Backing up JAAS login file /etc/ambari-server/conf/krb5JAASLogin.conf -> /etc/ambari-server/conf/krb5JAASLogin.conf.rpmsave
+Backing up stacks directory /var/lib/ambari-server/resources/stacks -> /var/lib/ambari-server/resources/stacks_03_01_18_15_31.old
+Backing up common-services directory /var/lib/ambari-server/resources/common-services -> /var/lib/ambari-server/resources/common-services_03_01_18_15_31.old
+Backing up Ambari view jars /var/lib/ambari-server/resources/views/*.jar -> /var/lib/ambari-server/resources/views/backups/
+Backing up Ambari server jar /usr/lib/ambari-server/ambari-server-2.4.2.0.136.jar -> /usr/lib/ambari-server-backups/
+  Updating   : ambari-server-2.5.2.0-298.x86_64                                                                                                                     1/2
+  Cleanup    : ambari-server-2.4.2.0-136.x86_64                                                                                                                     2/2
+warning: file /var/lib/ambari-server/resources/stacks/HDP/2.2/upgrades/upgrade-2.4.xml: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/stacks/HDP/2.2/upgrades/upgrade-2.3.xml: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/stacks/HDP/2.2/upgrades/upgrade-2.2.xml: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/stacks/HDP/2.2/upgrades/nonrolling-upgrade-2.4.xml: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/stacks/HDP/2.2/upgrades/nonrolling-upgrade-2.3.xml: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/stacks/HDP/2.2/upgrades/nonrolling-upgrade-2.2.xml: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/stacks/HDP/2.2/upgrades/config-upgrade.xml: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/stacks/HDP/2.2/upgrades: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/stacks/HDP/2.1/upgrades/nonrolling-upgrade-2.3.xml: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/stacks/HDP/2.1/upgrades: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/stacks/HDP/2.1/services/SMARTSENSE/package/files/view/view_instance.xml: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/stacks/HDP/2.1/services/SMARTSENSE/package/files/view/view_default.xml: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/stacks/HDP/2.1/services/SMARTSENSE/package/files/view/smartsense-ambari-view-1.3.1.0-136.jar: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/output.config.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/logsearch.properties.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/logfeeder.properties.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-zookeeper.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-zeppelin.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-yarn.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-storm.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-spark2.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-spark.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-ranger.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-oozie.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-knox.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-kafka.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-infra.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-hst.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-hive.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-hdfs.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-hbase.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-flume.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-falcon.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-atlas.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-ams.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-ambari.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/input.config-accumulo.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/LOGSEARCH/0.5.0/package/templates/grok-patterns.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/KERBEROS/1.10.3-10/package/templates/krb5_conf.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/KERBEROS/1.10.3-10/package/templates: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/AMBARI_METRICS/0.1.0/package/scripts/network.pyo: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/AMBARI_METRICS/0.1.0/package/scripts/network.pyc: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/AMBARI_METRICS/0.1.0/package/scripts/network.py: remove failed: No such file or directory
+warning: file /var/lib/ambari-server/resources/common-services/AMBARI_METRICS/0.1.0/configuration/storm-site.xml: remove failed: No such file or directory
+warning: file /usr/lib/ambari-server/ambari-server-2.4.2.0.136.jar: remove failed: No such file or directory
+  Verifying  : ambari-server-2.5.2.0-298.x86_64                                                                                                                     1/2
+  Verifying  : ambari-server-2.4.2.0-136.x86_64                                                                                                                     2/2
+
+Updated:
+  ambari-server.x86_64 0:2.5.2.0-298
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Complete!
+[root@ip-172-31-13-128 yum.repos.d]#
+[root@ip-172-31-13-128 yum.repos.d]# yum info ambari-server
+Loaded plugins: amazon-id, rhui-lb, search-disabled-repos
+Installed Packages
+Name        : ambari-server
+Arch        : x86_64
+Version     : 2.5.2.0
+Release     : 298
+Size        : 790 M
+Repo        : installed
+From repo   : ambari-2.5.2.0
+Summary     : Ambari Server
+URL         : http://www.apache.org
+License     : (c) Apache Software Foundation
+Description : Maven Recipe: RPM Package.
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[root@ip-172-31-13-128 yum.repos.d]#
+[root@ip-172-31-13-128 yum.repos.d]# yum upgrade ambari-agent
+Loaded plugins: amazon-id, rhui-lb, search-disabled-repos
+Resolving Dependencies
+--> Running transaction check
+---> Package ambari-agent.x86_64 0:2.4.2.0-136 will be updated
+---> Package ambari-agent.x86_64 0:2.5.2.0-298 will be an update
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+========================================================================================================================================================================
+ Package                                  Arch                               Version                                   Repository                                  Size
+========================================================================================================================================================================
+Updating:
+ ambari-agent                             x86_64                             2.5.2.0-298                               ambari-2.5.2.0                              90 M
+
+Transaction Summary
+========================================================================================================================================================================
+Upgrade  1 Package
+
+Total download size: 90 M
+Is this ok [y/d/N]: y
+Downloading packages:
+Delta RPMs disabled because /usr/bin/applydeltarpm not installed.
+ambari-agent-2.5.2.0-298.x86_64.rpm                                                                                                              |  90 MB  00:00:01
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Updating   : ambari-agent-2.5.2.0-298.x86_64                                                                                                                      1/2
+Upgrading configs in /etc/ambari-agent/conf/ambari-agent.ini
+Values will be updated from /etc/ambari-agent/conf/ambari-agent.ini.old except the following list: [('heartbeat', 'dirs'), ('heartbeat', 'state_interval')], ['stack', 'puppet', 'command', 'python']
+  Cleanup    : ambari-agent-2.4.2.0-136.x86_64                                                                                                                      2/2
+warning: file /var/lib/ambari-agent/cache/stacks/HDP/2.2/upgrades/upgrade-2.4.xml: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/stacks/HDP/2.2/upgrades/upgrade-2.3.xml: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/stacks/HDP/2.2/upgrades/upgrade-2.2.xml: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/stacks/HDP/2.2/upgrades/nonrolling-upgrade-2.4.xml: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/stacks/HDP/2.2/upgrades/nonrolling-upgrade-2.3.xml: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/stacks/HDP/2.2/upgrades/nonrolling-upgrade-2.2.xml: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/stacks/HDP/2.2/upgrades/config-upgrade.xml: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/stacks/HDP/2.2/upgrades: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/stacks/HDP/2.1/upgrades/nonrolling-upgrade-2.3.xml: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/stacks/HDP/2.1/upgrades: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/stacks/HDP/2.1/services/SMARTSENSE/package/files/view/view_instance.xml: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/stacks/HDP/2.1/services/SMARTSENSE/package/files/view/view_default.xml: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/stacks/HDP/2.1/services/SMARTSENSE/package/files/view/smartsense-ambari-view-1.3.1.0-136.jar: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/stacks/HDP/2.1/services/SMARTSENSE/package/files/rpm: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/output.config.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/logsearch.properties.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/logfeeder.properties.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-zookeeper.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-zeppelin.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-yarn.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-storm.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-spark2.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-spark.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-ranger.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-oozie.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-knox.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-kafka.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-infra.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-hst.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-hive.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-hdfs.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-hbase.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-flume.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-falcon.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-atlas.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-ams.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-ambari.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/input.config-accumulo.json.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/LOGSEARCH/0.5.0/package/templates/grok-patterns.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/KERBEROS/1.10.3-10/package/templates/krb5_conf.j2: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/KERBEROS/1.10.3-10/package/templates: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/AMBARI_METRICS/0.1.0/package/scripts/network.pyo: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/AMBARI_METRICS/0.1.0/package/scripts/network.pyc: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/AMBARI_METRICS/0.1.0/package/scripts/network.py: remove failed: No such file or directory
+warning: file /var/lib/ambari-agent/cache/common-services/AMBARI_METRICS/0.1.0/configuration/storm-site.xml: remove failed: No such file or directory
+  Verifying  : ambari-agent-2.5.2.0-298.x86_64                                                                                                                      1/2
+  Verifying  : ambari-agent-2.4.2.0-136.x86_64                                                                                                                      2/2
+
+Updated:
+  ambari-agent.x86_64 0:2.5.2.0-298
+
+Complete!
+[root@ip-172-31-13-128 yum.repos.d]#
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[root@ip-172-31-13-128 yum.repos.d]# ambari-server upgrade
+Using python  /usr/bin/python
+Upgrading ambari-server
+INFO: Upgrade Ambari Server
+INFO: Updating Ambari Server properties in ambari.properties ...
+INFO: Updating Ambari Server properties in ambari-env.sh ...
+WARNING: Original file ambari-env.sh kept
+INFO: Fixing database objects owner
+Ambari Server configured for Embedded Postgres. Confirm you have made a backup of the Ambari Server database [y/n] (y)? y
+INFO: Upgrading database schema
+INFO: Return code from schema upgrade command, retcode = 0
+INFO: Schema upgrade completed
+Adjusting ambari-server permissions and ownership...
+Ambari Server 'upgrade' completed successfully.
+[root@ip-172-31-13-128 yum.repos.d]#
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[root@ip-172-31-13-128 yum.repos.d]# ambari-server start
+Using python  /usr/bin/python
+Starting ambari-server
+Ambari Server running with administrator privileges.
+Organizing resource files at /var/lib/ambari-server/resources...
+Ambari database consistency check started...
+Server PID at: /var/run/ambari-server/ambari-server.pid
+Server out at: /var/log/ambari-server/ambari-server.out
+Server log at: /var/log/ambari-server/ambari-server.log
+Waiting for server start....................................
+Server started listening on 8080
+
+DB configs consistency check: no errors and warnings were found.
+Ambari Server 'start' completed successfully.
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+[root@ip-172-31-13-128 yum.repos.d]# ambari-agent start
+Verifying Python version compatibility...
+Using python  /usr/bin/python
+Checking for previously running Ambari Agent...
+Starting ambari-agent
+Verifying ambari-agent process status...
+Ambari Agent successfully started
+Agent PID at: /run/ambari-agent/ambari-agent.pid
+Agent out at: /var/log/ambari-agent/ambari-agent.out
+Agent log at: /var/log/ambari-agent/ambari-agent.log
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[root@ip-172-31-13-128 java]#  ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
+Using python  /usr/bin/python
+Setup ambari-server
+Copying /usr/share/java/mysql-connector-java.jar to /var/lib/ambari-server/resources
+If you are updating existing jdbc driver jar for mysql with mysql-connector-java.jar. Please remove the old driver jar, from all hosts. Restarting services that need the driver, will automatically copy the new jar to the hosts.
+JDBC driver was successfully initialized.
+Ambari Server 'setup' completed successfully.
+[root@ip-172-31-13-128 java]#
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[root@ip-172-31-13-128 ~]# yum clean all
+Loaded plugins: amazon-id, rhui-lb, search-disabled-repos
+Cleaning repos: HDP-2.4 HDP-UTILS-1.1.0.20 ambari-2.5.2.0 rhui-REGION-client-config-server-7 rhui-REGION-rhel-server-releases
+              : rhui-REGION-rhel-server-rh-common
+Cleaning up everything
+Maybe you want: rm -rf /var/cache/yum, to also free up space taken by orphaned data from disabled or removed repos
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[root@ip-172-31-13-128 ~]# yum upgrade ambari-metrics-monitor ambari-metrics-hadoop-sink
+Loaded plugins: amazon-id, rhui-lb, search-disabled-repos
+Resolving Dependencies
+--> Running transaction check
+---> Package ambari-metrics-hadoop-sink.x86_64 0:2.4.2.0-136 will be updated
+---> Package ambari-metrics-hadoop-sink.x86_64 0:2.5.2.0-298 will be an update
+---> Package ambari-metrics-monitor.x86_64 0:2.4.2.0-136 will be updated
+---> Package ambari-metrics-monitor.x86_64 0:2.5.2.0-298 will be an update
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+======================================================================================================================================
+ Package                                    Arch                   Version                       Repository                      Size
+======================================================================================================================================
+Updating:
+ ambari-metrics-hadoop-sink                 x86_64                 2.5.2.0-298                   ambari-2.5.2.0                  19 M
+ ambari-metrics-monitor                     x86_64                 2.5.2.0-298                   ambari-2.5.2.0                 181 k
+
+Transaction Summary
+======================================================================================================================================
+Upgrade  2 Packages
+
+Total download size: 19 M
+Is this ok [y/d/N]: y
+Downloading packages:
+Delta RPMs disabled because /usr/bin/applydeltarpm not installed.
+(1/2): ambari-metrics-monitor-2.5.2.0-298.x86_64.rpm                                                           | 181 kB  00:00:00
+(2/2): ambari-metrics-hadoop-sink-2.5.2.0-298.x86_64.rpm                                                       |  19 MB  00:00:00
+--------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                  59 MB/s |  19 MB  00:00:00
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Updating   : ambari-metrics-monitor-2.5.2.0-298.x86_64                                                                          1/4
+  Updating   : ambari-metrics-hadoop-sink-2.5.2.0-298.x86_64                                                                      2/4
+  Cleanup    : ambari-metrics-monitor-2.4.2.0-136.x86_64                                                                          3/4
+  Cleanup    : ambari-metrics-hadoop-sink-2.4.2.0-136.x86_64                                                                      4/4
+  Verifying  : ambari-metrics-hadoop-sink-2.5.2.0-298.x86_64                                                                      1/4
+  Verifying  : ambari-metrics-monitor-2.5.2.0-298.x86_64                                                                          2/4
+  Verifying  : ambari-metrics-monitor-2.4.2.0-136.x86_64                                                                          3/4
+  Verifying  : ambari-metrics-hadoop-sink-2.4.2.0-136.x86_64                                                                      4/4
+
+Updated:
+  ambari-metrics-hadoop-sink.x86_64 0:2.5.2.0-298                     ambari-metrics-monitor.x86_64 0:2.5.2.0-298
+
+Complete!
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[root@ip-172-31-9-255 ~]# yum upgrade ambari-metrics-collector
+Loaded plugins: amazon-id, rhui-lb, search-disabled-repos
+Resolving Dependencies
+--> Running transaction check
+---> Package ambari-metrics-collector.x86_64 0:2.4.2.0-136 will be updated
+---> Package ambari-metrics-collector.x86_64 0:2.5.2.0-298 will be an update
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+======================================================================================================================================
+ Package                                   Arch                    Version                      Repository                       Size
+======================================================================================================================================
+Updating:
+ ambari-metrics-collector                  x86_64                  2.5.2.0-298                  ambari-2.5.2.0                  238 M
+
+Transaction Summary
+======================================================================================================================================
+Upgrade  1 Package
+
+Total download size: 238 M
+Is this ok [y/d/N]: y
+Downloading packages:
+Delta RPMs disabled because /usr/bin/applydeltarpm not installed.
+ambari-metrics-collector-2.5.2.0-298.x86_64.rpm                                                                | 238 MB  00:00:03
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Updating   : ambari-metrics-collector-2.5.2.0-298.x86_64                                                                        1/2
+  Cleanup    : ambari-metrics-collector-2.4.2.0-136.x86_64                                                                        2/2
+  Verifying  : ambari-metrics-collector-2.5.2.0-298.x86_64                                                                        1/2
+  Verifying  : ambari-metrics-collector-2.4.2.0-136.x86_64                                                                        2/2
+
+Updated:
+  ambari-metrics-collector.x86_64 0:2.5.2.0-298
+
+Complete!
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[root@ip-172-31-9-255 ~]# yum upgrade ambari-metrics-grafana
+Loaded plugins: amazon-id, rhui-lb, search-disabled-repos
+Resolving Dependencies
+--> Running transaction check
+---> Package ambari-metrics-grafana.x86_64 0:2.4.2.0-136 will be updated
+---> Package ambari-metrics-grafana.x86_64 0:2.5.2.0-298 will be an update
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+======================================================================================================================================
+ Package                                 Arch                    Version                        Repository                       Size
+======================================================================================================================================
+Updating:
+ ambari-metrics-grafana                  x86_64                  2.5.2.0-298                    ambari-2.5.2.0                   18 M
+
+Transaction Summary
+======================================================================================================================================
+Upgrade  1 Package
+
+Total download size: 18 M
+Is this ok [y/d/N]: y
+Downloading packages:
+Delta RPMs disabled because /usr/bin/applydeltarpm not installed.
+ambari-metrics-grafana-2.5.2.0-298.x86_64.rpm                                                                  |  18 MB  00:00:00
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Updating   : ambari-metrics-grafana-2.5.2.0-298.x86_64                                                                          1/2
+  Cleanup    : ambari-metrics-grafana-2.4.2.0-136.x86_64                                                                          2/2
+  Verifying  : ambari-metrics-grafana-2.5.2.0-298.x86_64                                                                          1/2
+  Verifying  : ambari-metrics-grafana-2.4.2.0-136.x86_64                                                                          2/2
+
+Updated:
+  ambari-metrics-grafana.x86_64 0:2.5.2.0-298
+
+Complete!
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[root@ip-172-31-9-255 ~]# yum info smartsense-hst
+Loaded plugins: amazon-id, rhui-lb, search-disabled-repos
+HDP-2.4                                                                                                        | 2.9 kB  00:00:00
+HDP-UTILS-1.1.0.20                                                                                             | 2.9 kB  00:00:00
+ambari-2.5.2.0                                                                                                 | 2.9 kB  00:00:00
+rhui-REGION-client-config-server-7                                                                             | 2.9 kB  00:00:00
+rhui-REGION-rhel-server-releases                                                                               | 3.5 kB  00:00:00
+rhui-REGION-rhel-server-rh-common                                                                              | 3.8 kB  00:00:00
+(1/10): ambari-2.5.2.0/primary_db                                                                              | 8.7 kB  00:00:00
+(2/10): HDP-UTILS-1.1.0.20/primary_db                                                                          |  28 kB  00:00:00
+(3/10): HDP-2.4/primary_db                                                                                     |  62 kB  00:00:00
+(4/10): rhui-REGION-client-config-server-7/x86_64/primary_db                                                   | 3.3 kB  00:00:00
+(5/10): rhui-REGION-rhel-server-releases/7Server/x86_64/group                                                  | 709 kB  00:00:00
+(6/10): rhui-REGION-rhel-server-rh-common/7Server/x86_64/group                                                 |  104 B  00:00:00
+(7/10): rhui-REGION-rhel-server-rh-common/7Server/x86_64/primary_db                                            | 120 kB  00:00:00
+(8/10): rhui-REGION-rhel-server-rh-common/7Server/x86_64/updateinfo                                            |  33 kB  00:00:00
+(9/10): rhui-REGION-rhel-server-releases/7Server/x86_64/updateinfo                                             | 2.4 MB  00:00:00
+(10/10): rhui-REGION-rhel-server-releases/7Server/x86_64/primary_db                                            |  46 MB  00:00:00
+Installed Packages
+Name        : smartsense-hst
+Arch        : x86_64
+Version     : 1.3.1.0
+Release     : 136
+Size        : 203 M
+Repo        : installed
+From repo   : Updates-ambari-2.4.2.0
+Summary     : Hortonworks SmartSense Tool
+License     : 2014, Apache Software Foundation
+Description : Maven Recipe: RPM Package.
+
+Available Packages
+Name        : smartsense-hst
+Arch        : x86_64
+Version     : 1.4.2.2.5.2.0
+Release     : 298
+Size        : 247 M
+Repo        : ambari-2.5.2.0
+Summary     : Hortonworks SmartSense Tool
+License     : 2014, Apache Software Foundation
+Description : Maven Recipe: RPM Package.
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[root@ip-172-31-9-255 ~]# yum upgrade smartsense-hst
+Loaded plugins: amazon-id, rhui-lb, search-disabled-repos
+Resolving Dependencies
+--> Running transaction check
+---> Package smartsense-hst.x86_64 0:1.3.1.0-136 will be updated
+---> Package smartsense-hst.x86_64 0:1.4.2.2.5.2.0-298 will be an update
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+======================================================================================================================================
+ Package                          Arch                     Version                             Repository                        Size
+======================================================================================================================================
+Updating:
+ smartsense-hst                   x86_64                   1.4.2.2.5.2.0-298                   ambari-2.5.2.0                   247 M
+
+Transaction Summary
+======================================================================================================================================
+Upgrade  1 Package
+
+Total download size: 247 M
+Is this ok [y/d/N]: y
+Downloading packages:
+Delta RPMs disabled because /usr/bin/applydeltarpm not installed.
+smartsense-hst-1.4.2.2.5.2.0-298.x86_64.rpm                                                                    | 247 MB  00:00:03
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Updating   : smartsense-hst-1.4.2.2.5.2.0-298.x86_64                                                                            1/2
+Upgrading Agent...
+SmartSense Agent reset completed.
+Upgrading Server...
+SmartSense Server is not running
+Done upgrading the server.
+SmartSense Server reset completed.
+  Cleanup    : smartsense-hst-1.3.1.0-136.x86_64                                                                                  2/2
+  Verifying  : smartsense-hst-1.4.2.2.5.2.0-298.x86_64                                                                            1/2
+  Verifying  : smartsense-hst-1.3.1.0-136.x86_64                                                                                  2/2
+
+Updated:
+  smartsense-hst.x86_64 0:1.4.2.2.5.2.0-298
+
+Complete!
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[root@ip-172-31-13-128 ~]# hst upgrade-ambari-service
+Please enter Ambari Server hostname (ip-172-31-13-128.ap-south-1.compute.internal):
+Please enter Ambari Server port (8080):
+Please enter Ambari admin user id (admin):
+Please enter password for admin:
+
+
+Un-installing old view ...
+Installing new view ...
+Removing deprecated alerts ...
+Updating SmartSense configurations in Ambari ...
+
+
+SmartSense service upgrade completed!
+NOTE: It is required to restart Ambari Server for changes to reflect. Please restart ambari using 'ambari-server restart'
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[root@ip-172-31-13-128 ~]# ambari-server restart
+Using python  /usr/bin/python
+Restarting ambari-server
+Waiting for server stop...
+Ambari Server stopped
+Ambari Server running with administrator privileges.
+Organizing resource files at /var/lib/ambari-server/resources...
+Ambari database consistency check started...
+Server PID at: /var/run/ambari-server/ambari-server.pid
+Server out at: /var/log/ambari-server/ambari-server.out
+Server log at: /var/log/ambari-server/ambari-server.log
+Waiting for server start..............................
+Server started listening on 8080
+
+DB configs consistency check found warnings. See /var/log/ambari-server/ambari-server-check-database.log for more details.
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

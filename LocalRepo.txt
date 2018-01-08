@@ -1,0 +1,926 @@
+yum update -y
+yum install httpd -y
+service httpd status
+service httpd start
+chkconfig httpd on
+yum install yum-utils createrepo -y
+==> Download Public repo
+wget http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.5.2.0/ambari.repo -O /etc/yum.repos.d/ambari.repo
+wget http://public-repo-1.hortonworks.com/HDP/centos7/2.x/updates/2.5.3.0/hdp.repo -O /etc/yum.repos.d/hdp.repo
+yum repolist
+
+==> Create driectory structure 
+mkdir -p /var/www/html/repo
+mkdir -p /var/www/html/repo/ambari/centos7
+mkdir -p /var/www/html/repo/hdp/centos7
+
+==> fire reposync to create ambari repo
+cd /var/www/html/repo/ambari/centos7
+reposync -r ambari-2.5.2.0
+createrepo -v /var/www/html/repo/ambari/centos7/ambari-2.5.2.0
+
+==> fire reposync command HDP and HDP-UTILS
+cd /var/www/html/repo/hdp/centos7
+reposync -r HDP-2.5.3.0
+reposync -r HDP-UTILS-1.1.0.21
+createrepo -v /var/www/html/repo/hdp/centos7/HDP-2.5.3.0
+createrepo -v /var/www/html/repo/hdp/centos7/HDP-UTILS-1.1.0.21
+
+
+[root@ip-172-31-12-96 centos7]# cat /etc/yum.repos.d/ambari.repo
+#VERSION_NUMBER=2.5.2.0-298
+[ambari-2.5.2.0]
+name=ambari Version - ambari-2.5.2.0
+baseurl=http://13.126.21.243/repo/ambari/centos7/ambari-2.5.2.0/ambari/
+gpgcheck=0
+#gpgkey=http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.5.2.0/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+enabled=1
+#priority=1
+
+[root@ip-172-31-12-96 yum.repos.d]# cat hdp.repo
+#VERSION_NUMBER=2.5.3.0-37
+[HDP-2.5.3.0]
+name=HDP Version - HDP-2.5.3.0
+baseurl=http://13.126.21.243/repo/hdp/centos7/HDP-2.5.3.0/
+gpgcheck=0
+#gpgkey=http://public-repo-1.hortonworks.com/HDP/centos7/2.x/updates/2.5.3.0/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+enabled=1
+#priority=1
+
+
+[HDP-UTILS-1.1.0.21]
+name=HDP-UTILS Version - HDP-UTILS-1.1.0.21
+baseurl=http://13.126.21.243/repo/hdp/centos7/HDP-UTILS-1.1.0.21/
+gpgcheck=0
+#gpgkey=http://public-repo-1.hortonworks.com/HDP/centos7/2.x/updates/2.5.3.0/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+enabled=1
+#priority=1
+[root@ip-172-31-12-96 yum.repos.d]#
+
+
+[root@ip-172-31-12-96 centos7]# lsof -i:80
+-bash: lsof: command not found
+[root@ip-172-31-12-96 centos7]# yum install lsof -y
+Loaded plugins: amazon-id, rhui-lb, search-disabled-repos
+Resolving Dependencies
+--> Running transaction check
+---> Package lsof.x86_64 0:4.87-4.el7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+========================================================================================================================================================================
+ Package                        Arch                             Version                               Repository                                                  Size
+========================================================================================================================================================================
+Installing:
+ lsof                           x86_64                           4.87-4.el7                            rhui-REGION-rhel-server-releases                           331 k
+
+Transaction Summary
+========================================================================================================================================================================
+Install  1 Package
+
+Total download size: 331 k
+Installed size: 927 k
+Downloading packages:
+lsof-4.87-4.el7.x86_64.rpm                                                                                                                       | 331 kB  00:00:00
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : lsof-4.87-4.el7.x86_64                                                                                                                               1/1
+  Verifying  : lsof-4.87-4.el7.x86_64                                                                                                                               1/1
+
+Installed:
+  lsof.x86_64 0:4.87-4.el7
+
+Complete!
+[root@ip-172-31-12-96 centos7]# lsof -i:80
+COMMAND   PID   USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+httpd   24679   root    4u  IPv6  41248      0t0  TCP *:http (LISTEN)
+httpd   24680 apache    4u  IPv6  41248      0t0  TCP *:http (LISTEN)
+httpd   24681 apache    4u  IPv6  41248      0t0  TCP *:http (LISTEN)
+httpd   24682 apache    4u  IPv6  41248      0t0  TCP *:http (LISTEN)
+httpd   24683 apache    4u  IPv6  41248      0t0  TCP *:http (LISTEN)
+httpd   24684 apache    4u  IPv6  41248      0t0  TCP *:http (LISTEN)
+httpd   24795 apache    4u  IPv6  41248      0t0  TCP *:http (LISTEN)
+
+[root@ip-172-31-12-96 centos7]# reposync -r ambari-2.5.2.0
+warning: /var/www/html/repo/ambari/centos7/ambari-2.5.2.0/ambari/ambari-agent-2.5.2.0-298.x86_64.rpm: Header V4 RSA/SHA1 Signature, key ID 07513cad: NOKEY 00:00:32 ETA
+Public key for ambari-agent-2.5.2.0-298.x86_64.rpm is not installed
+(1/12): ambari-agent-2.5.2.0-298.x86_64.rpm                                                                                                      |  90 MB  00:00:03
+(2/12): ambari-infra-solr-2.5.2.0-298.noarch.rpm                                                                                                 | 128 MB  00:00:04
+(3/12): ambari-infra-solr-client-2.5.2.0-298.noarch.rpm                                                                                          |  13 MB  00:00:01
+(4/12): ambari-logsearch-logfeeder-2.5.2.0-298.noarch.rpm                                                                                        |  49 MB  00:00:11
+(5/12): ambari-metrics-collector-2.5.2.0-298.x86_64.rpm                                                                                          | 238 MB  00:00:05
+(6/12): ambari-metrics-common-2.5.2.0-298.noarch.rpm                                                                                             | 2.4 kB  00:00:00
+(7/12): ambari-metrics-grafana-2.5.2.0-298.x86_64.rpm                                                                                            |  18 MB  00:00:00
+(8/12): ambari-metrics-hadoop-sink-2.5.2.0-298.x86_64.rpm                                                                                        |  19 MB  00:00:00
+(9/12): ambari-metrics-monitor-2.5.2.0-298.x86_64.rpm                                                                                            | 181 kB  00:00:00
+(10/12): ambari-logsearch-portal-2.5.2.0-298.noarch.rpm                                                                                          |  65 MB  00:00:27
+(11/12): smartsense-hst-1.4.2.2.5.2.0-298.x86_64.rpm                                                                                             | 247 MB  00:00:07
+(12/12): ambari-server-2.5.2.0-298.x86_64.rpm                                                                                                    | 716 MB  00:00:29
+[root@ip-172-31-12-96 centos7]# ll
+total 0
+drwxr-xr-x. 4 root root 38 Jan  3 08:48 ambari-2.5.2.0
+[root@ip-172-31-12-96 centos7]#
+[root@ip-172-31-12-96 centos7]# createrepo -v /var/www/html/repo/ambari/centos7/ambari-2.5.2.0/
+Spawning worker 0 with 12 pkgs
+Worker 0: reading ambari/ambari-agent-2.5.2.0-298.x86_64.rpm
+Worker 0: reading ambari/ambari-infra-solr-2.5.2.0-298.noarch.rpm
+Worker 0: reading ambari/ambari-infra-solr-client-2.5.2.0-298.noarch.rpm
+Worker 0: reading ambari/ambari-logsearch-logfeeder-2.5.2.0-298.noarch.rpm
+Worker 0: reading ambari/ambari-logsearch-portal-2.5.2.0-298.noarch.rpm
+Worker 0: reading ambari/ambari-metrics-collector-2.5.2.0-298.x86_64.rpm
+Worker 0: reading ambari/ambari-metrics-common-2.5.2.0-298.noarch.rpm
+Worker 0: reading ambari/ambari-metrics-grafana-2.5.2.0-298.x86_64.rpm
+Worker 0: reading ambari/ambari-metrics-hadoop-sink-2.5.2.0-298.x86_64.rpm
+Worker 0: reading ambari/ambari-metrics-monitor-2.5.2.0-298.x86_64.rpm
+Worker 0: reading ambari/ambari-server-2.5.2.0-298.x86_64.rpm
+Worker 0: reading smartsense/smartsense-hst-1.4.2.2.5.2.0-298.x86_64.rpm
+Workers Finished
+Saving Primary metadata
+Saving file lists metadata
+Saving other metadata
+Generating sqlite DBs
+Starting other db creation: Wed Jan  3 08:51:26 2018
+Ending other db creation: Wed Jan  3 08:51:26 2018
+Starting filelists db creation: Wed Jan  3 08:51:26 2018
+Ending filelists db creation: Wed Jan  3 08:51:26 2018
+Starting primary db creation: Wed Jan  3 08:51:26 2018
+Ending primary db creation: Wed Jan  3 08:51:26 2018
+Sqlite DBs complete
+[root@ip-172-31-12-96 centos7]#
+[root@ip-172-31-12-96 centos7]# reposync -r HDP-2.5.3.0
+warning: /var/www/html/repo/hdp/centos7/HDP-2.5.3.0/vrpms/accumulo/accumulo-1.7.0.2.5.3.0-37.el6.noarch.rpm: Header V4 RSA/SHA1 Signature, key ID 07513cad: NOKEY-- ETA
+Public key for accumulo-1.7.0.2.5.3.0-37.el6.noarch.rpm is not installed
+(1/200): accumulo-1.7.0.2.5.3.0-37.el6.noarch.rpm                                                                                                | 2.5 kB  00:00:00
+(2/200): accumulo-conf-standalone-1.7.0.2.5.3.0-37.el6.noarch.rpm                                                                                | 2.6 kB  00:00:00
+(3/200): accumulo-source-1.7.0.2.5.3.0-37.el6.noarch.rpm                                                                                         | 2.6 kB  00:00:00
+(4/200): accumulo-test-1.7.0.2.5.3.0-37.el6.noarch.rpm                                                                                           | 2.5 kB  00:00:00
+(5/200): accumulo_2_5_3_0_37-conf-standalone-1.7.0.2.5.3.0-37.el6.x86_64.rpm                                                                     | 2.8 kB  00:00:00
+(6/200): accumulo_2_5_3_0_37-source-1.7.0.2.5.3.0-37.el6.x86_64.rpm                                                                              | 3.1 kB  00:00:00
+(7/200): accumulo_2_5_3_0_37-test-1.7.0.2.5.3.0-37.el6.x86_64.rpm                                                                                | 2.5 MB  00:00:04
+(8/200): atlas-metadata-0.7.0.2.5.3.0-37.el6.noarch.rpm                                                                                          | 2.5 kB  00:00:00
+(9/200): atlas-metadata-hive-plugin-0.7.0.2.5.3.0-37.el6.noarch.rpm                                                                              | 2.6 kB  00:00:00
+(10/200): accumulo_2_5_3_0_37-1.7.0.2.5.3.0-37.el6.x86_64.rpm                                                                                    |  16 MB  00:00:08
+(11/200): atlas-metadata_2_5_3_0_37-hive-plugin-0.7.0.2.5.3.0-37.el6.noarch.rpm                                                                  | 173 MB  00:00:03
+(12/200): bigtop-jsvc-1.0.15-37.el6.x86_64.rpm                                                                                                   |  30 kB  00:00:00
+(13/200): bigtop-tomcat-6.0.44-1.el6.noarch.rpm                                                                                                  | 5.5 MB  00:00:04
+(14/200): datafu-1.3.0.2.5.3.0-37.el6.noarch.rpm                                                                                                 | 2.5 kB  00:00:00
+(15/200): datafu_2_5_3_0_37-1.3.0.2.5.3.0-37.el6.noarch.rpm                                                                                      | 2.5 MB  00:00:00
+(16/200): falcon-0.10.0.2.5.3.0-37.el6.noarch.rpm                                                                                                | 2.5 kB  00:00:00
+(17/200): falcon-doc-0.10.0.2.5.3.0-37.el6.noarch.rpm                                                                                            | 2.5 kB  00:00:00
+(18/200): atlas-metadata_2_5_3_0_37-0.7.0.2.5.3.0-37.el6.noarch.rpm                                                                              | 122 MB  00:00:15
+(19/200): falcon_2_5_3_0_37-doc-0.10.0.2.5.3.0-37.el6.noarch.rpm                                                                                 | 765 kB  00:00:02
+(20/200): flume-1.5.2.2.5.3.0-37.el6.noarch.rpm                                                                                                  | 2.5 kB  00:00:00
+(21/200): flume-agent-1.5.2.2.5.3.0-37.el6.noarch.rpm                                                                                            | 2.5 kB  00:00:00
+(22/200): flume_2_5_3_0_37-1.5.2.2.5.3.0-37.el6.noarch.rpm                                                                                       |  42 MB  00:00:00
+(23/200): flume_2_5_3_0_37-agent-1.5.2.2.5.3.0-37.el6.noarch.rpm                                                                                 | 6.3 kB  00:00:00
+(24/200): hadoop-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                                 | 2.5 kB  00:00:00
+(25/200): hadoop-client-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                          | 2.5 kB  00:00:00
+(26/200): hadoop-conf-pseudo-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                     | 2.6 kB  00:00:00
+(27/200): hadoop-doc-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                             | 2.5 kB  00:00:00
+(28/200): hadoop-hdfs-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                            | 2.5 kB  00:00:00
+(29/200): hadoop-hdfs-datanode-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                   | 2.6 kB  00:00:00
+(30/200): hadoop-hdfs-fuse-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                       | 2.6 kB  00:00:00
+(31/200): hadoop-hdfs-journalnode-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                | 2.6 kB  00:00:00
+(32/200): hadoop-hdfs-namenode-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                   | 2.6 kB  00:00:00
+(33/200): hadoop-hdfs-secondarynamenode-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                          | 2.6 kB  00:00:00
+(34/200): hadoop-hdfs-zkfc-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                       | 2.6 kB  00:00:00
+(35/200): hadoop-httpfs-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                          | 2.5 kB  00:00:00
+(36/200): hadoop-httpfs-server-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                   | 2.6 kB  00:00:00
+(37/200): hadoop-libhdfs-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                         | 2.5 kB  00:00:00
+(38/200): hadoop-mapreduce-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                       | 2.6 kB  00:00:00
+(39/200): hadoop-mapreduce-historyserver-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                         | 2.6 kB  00:00:00
+(40/200): hadoop-source-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                          | 2.5 kB  00:00:00
+(41/200): hadoop-yarn-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                            | 2.5 kB  00:00:00
+(42/200): hadoop-yarn-nodemanager-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                | 2.6 kB  00:00:00
+(43/200): hadoop-yarn-proxyserver-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                | 2.6 kB  00:00:00
+(44/200): hadoop-yarn-resourcemanager-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                            | 2.6 kB  00:00:00
+(45/200): hadoop-yarn-timelineserver-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                             | 2.6 kB  00:00:00
+(46/200): hadoop_2_5_3_0_37-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                                      | 224 MB  00:00:05
+(47/200): hadoop_2_5_3_0_37-client-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                               |  24 kB  00:00:00
+(48/200): hadoop_2_5_3_0_37-conf-pseudo-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                          |  21 kB  00:00:00
+(49/200): hadoop_2_5_3_0_37-doc-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                                  | 436 kB  00:00:02
+(50/200): hadoop_2_5_3_0_37-hdfs-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                                 |  23 MB  00:00:00
+(51/200): hadoop_2_5_3_0_37-hdfs-datanode-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                        | 5.7 kB  00:00:00
+(52/200): hadoop_2_5_3_0_37-hdfs-fuse-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                            |  50 kB  00:00:00
+(53/200): hadoop_2_5_3_0_37-hdfs-journalnode-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                     | 5.6 kB  00:00:00
+(54/200): hadoop_2_5_3_0_37-hdfs-namenode-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                        | 5.7 kB  00:00:00
+(55/200): hadoop_2_5_3_0_37-hdfs-secondarynamenode-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                               | 5.6 kB  00:00:00
+(56/200): falcon_2_5_3_0_37-0.10.0.2.5.3.0-37.el6.noarch.rpm                                                                                     | 298 MB  00:00:27
+(57/200): hadoop_2_5_3_0_37-hdfs-zkfc-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                            | 5.4 kB  00:00:03
+(58/200): hadoop_2_5_3_0_37-httpfs-server-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                        | 5.1 kB  00:00:00
+(59/200): hadoop_2_5_3_0_37-libhdfs-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                              |  80 kB  00:00:00
+(60/200): hadoop_2_5_3_0_37-mapreduce-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                            |  32 MB  00:00:00
+(61/200): hadoop_2_5_3_0_37-mapreduce-historyserver-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                              | 5.9 kB  00:00:00
+(62/200): hadoop_2_5_3_0_37-httpfs-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                               |  32 MB  00:00:09
+(63/200): hadoop_2_5_3_0_37-yarn-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                                 |  28 MB  00:00:00
+(64/200): hadoop_2_5_3_0_37-source-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                               |  18 MB  00:00:08
+(65/200): hadoop_2_5_3_0_37-yarn-nodemanager-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                     | 5.6 kB  00:00:00
+(66/200): hadoop_2_5_3_0_37-yarn-resourcemanager-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                 | 5.5 kB  00:00:00
+(67/200): hadoop_2_5_3_0_37-yarn-proxyserver-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                     | 5.2 kB  00:00:00
+(68/200): hadoop_2_5_3_0_37-yarn-timelineserver-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                  | 5.6 kB  00:00:00
+(69/200): hadooplzo-native-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                       | 2.6 kB  00:00:00
+(70/200): hadooplzo-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                              | 2.5 kB  00:00:00
+(71/200): hadooplzo_2_5_3_0_37-native-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                            |  31 kB  00:00:00
+(72/200): hbase-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                                  | 2.5 kB  00:00:00
+(73/200): hbase-doc-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                              | 2.5 kB  00:00:00
+(74/200): hbase-master-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                           | 2.5 kB  00:00:00
+(75/200): hbase-regionserver-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                     | 2.6 kB  00:00:00
+(76/200): hadooplzo_2_5_3_0_37-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                                   | 278 kB  00:00:01
+(77/200): hbase-rest-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                             | 2.5 kB  00:00:00
+(78/200): hbase-thrift-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                           | 2.5 kB  00:00:00
+(79/200): hbase-thrift2-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                          | 2.5 kB  00:00:00
+(80/200): hbase_2_5_3_0_37-doc-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                   |  15 MB  00:00:07
+(81/200): hbase_2_5_3_0_37-master-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                | 5.1 kB  00:00:00
+(82/200): hbase_2_5_3_0_37-regionserver-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                          | 7.4 kB  00:00:00
+(83/200): hbase_2_5_3_0_37-rest-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                  | 5.0 kB  00:00:00
+(84/200): hbase_2_5_3_0_37-thrift-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                | 5.5 kB  00:00:00
+(85/200): hbase_2_5_3_0_37-thrift2-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                               | 5.1 kB  00:00:00
+(86/200): hdp-select-2.5.3.0-37.el6.noarch.rpm                                                                                                   |  10 kB  00:00:00
+(87/200): hive-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                                                | 2.5 kB  00:00:00
+(88/200): hive-hcatalog-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                                       | 2.6 kB  00:00:00
+(89/200): hive-hcatalog-server-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                                | 2.6 kB  00:00:00
+(90/200): hive-jdbc-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                                           | 2.5 kB  00:00:00
+(91/200): hive-metastore-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                                      | 2.6 kB  00:00:00
+(92/200): hive-server-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                                         | 2.5 kB  00:00:00
+(93/200): hbase_2_5_3_0_37-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                       |  72 MB  00:00:12
+(94/200): hive-server2-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                                        | 2.6 kB  00:00:00
+(95/200): hive-webhcat-server-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                                 | 2.6 kB  00:00:00
+(96/200): hive-webhcat-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                                        | 2.6 kB  00:00:00
+(97/200): hive2-jdbc-2.1.0.2.5.3.0-37.el6.noarch.rpm                                                                                             | 2.5 kB  00:00:00
+(98/200): hive2-2.1.0.2.5.3.0-37.el6.noarch.rpm                                                                                                  | 2.5 kB  00:00:00
+(99/200): hive2_2_5_3_0_37-jdbc-2.1.0.2.5.3.0-37.el6.noarch.rpm                                                                                  |  56 MB  00:00:01
+(100/200): hive2_2_5_3_0_37-2.1.0.2.5.3.0-37.el6.noarch.rpm                                                                                      |  91 MB  00:00:02
+(101/200): hive_2_5_3_0_37-hcatalog-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                           | 395 kB  00:00:00
+(102/200): hive_2_5_3_0_37-hcatalog-server-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                    | 5.5 kB  00:00:00
+(103/200): hive_2_5_3_0_37-jdbc-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                               |  44 MB  00:00:01
+(104/200): hive_2_5_3_0_37-metastore-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                          | 5.6 kB  00:00:00
+(105/200): hive_2_5_3_0_37-server-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                             | 5.6 kB  00:00:00
+(106/200): hive_2_5_3_0_37-server2-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                            | 5.6 kB  00:00:00
+(107/200): hive_2_5_3_0_37-webhcat-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                            | 3.8 MB  00:00:00
+(108/200): hive_2_5_3_0_37-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                                    | 153 MB  00:00:03
+(109/200): hive_2_5_3_0_37-webhcat-server-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                     | 5.4 kB  00:00:00
+(110/200): hue-2.6.1.2.5.3.0-37.el6.x86_64.rpm                                                                                                   | 2.9 kB  00:00:01
+(111/200): hue-beeswax-2.6.1.2.5.3.0-37.el6.x86_64.rpm                                                                                           | 413 kB  00:00:02
+(112/200): hue-hcatalog-2.6.1.2.5.3.0-37.el6.x86_64.rpm                                                                                          |  76 kB  00:00:00
+(113/200): hue-oozie-2.6.1.2.5.3.0-37.el6.x86_64.rpm                                                                                             | 655 kB  00:00:02
+(114/200): hue-pig-2.6.1.2.5.3.0-37.el6.x86_64.rpm                                                                                               | 123 kB  00:00:01
+(115/200): hue-server-2.6.1.2.5.3.0-37.el6.x86_64.rpm                                                                                            | 5.2 kB  00:00:00
+(116/200): kafka-0.10.0.2.5.3.0-37.el6.noarch.rpm                                                                                                | 2.5 kB  00:00:00
+(117/200): hue-common-2.6.1.2.5.3.0-37.el6.x86_64.rpm                                                                                            |  36 MB  00:00:09
+(118/200): knox-0.9.0.2.5.3.0-37.el6.noarch.rpm                                                                                                  | 2.5 kB  00:00:00
+(119/200): kafka_2_5_3_0_37-0.10.0.2.5.3.0-37.el6.noarch.rpm                                                                                     |  28 MB  00:00:09
+(120/200): livy-0.2.0.2.5.3.0-37.el6.noarch.rpm                                                                                                  | 2.5 kB  00:00:00
+(121/200): knox_2_5_3_0_37-0.9.0.2.5.3.0-37.el6.noarch.rpm                                                                                       |  65 MB  00:00:12
+(122/200): mahout-0.9.0.2.5.3.0-37.el6.noarch.rpm                                                                                                | 2.5 kB  00:00:00
+(123/200): mahout-doc-0.9.0.2.5.3.0-37.el6.noarch.rpm                                                                                            | 2.5 kB  00:00:00
+(124/200): livy_2_5_3_0_37-0.2.0.2.5.3.0-37.el6.noarch.rpm                                                                                       |  67 MB  00:00:11
+(125/200): mahout_2_5_3_0_37-doc-0.9.0.2.5.3.0-37.el6.noarch.rpm                                                                                 | 2.6 kB  00:00:00
+(126/200): oozie-4.2.0.2.5.3.0-37.el6.noarch.rpm                                                                                                 | 2.5 kB  00:00:00
+(127/200): oozie-client-4.2.0.2.5.3.0-37.el6.noarch.rpm                                                                                          | 2.5 kB  00:00:00
+(128/200): mahout_2_5_3_0_37-0.9.0.2.5.3.0-37.el6.noarch.rpm                                                                                     | 172 MB  00:00:15
+(129/200): oozie_2_5_3_0_37-client-4.2.0.2.5.3.0-37.el6.noarch.rpm                                                                               |  31 MB  00:00:08
+(130/200): phoenix-4.7.0.2.5.3.0-37.el6.noarch.rpm                                                                                               | 2.5 kB  00:00:00
+(131/200): oozie_2_5_3_0_37-4.2.0.2.5.3.0-37.el6.noarch.rpm                                                                                      | 618 MB  00:00:44
+(132/200): pig-0.16.0.2.5.3.0-37.el6.noarch.rpm                                                                                                  | 2.5 kB  00:00:00
+(133/200): pig_2_5_3_0_37-0.16.0.2.5.3.0-37.el6.noarch.rpm                                                                                       | 223 MB  00:00:04
+(134/200): ranger-admin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                          | 2.5 kB  00:00:00
+(135/200): ranger-atlas-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                   | 2.6 kB  00:00:00
+(136/200): ranger-hbase-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                   | 2.6 kB  00:00:00
+(137/200): ranger-hdfs-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                    | 2.6 kB  00:00:00
+(138/200): ranger-hive-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                    | 2.6 kB  00:00:00
+(139/200): ranger-kafka-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                   | 2.6 kB  00:00:00
+(140/200): ranger-kms-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                            | 2.5 kB  00:00:00
+(141/200): ranger-knox-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                    | 2.6 kB  00:00:00
+(142/200): ranger-solr-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                    | 2.6 kB  00:00:00
+(143/200): ranger-storm-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                   | 2.6 kB  00:00:00
+(144/200): ranger-tagsync-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                        | 2.5 kB  00:00:00
+(145/200): ranger-usersync-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                       | 2.6 kB  00:00:00
+(146/200): ranger-yarn-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                    | 2.6 kB  00:00:00
+(147/200): phoenix_2_5_3_0_37-4.7.0.2.5.3.0-37.el6.noarch.rpm                                                                                    | 208 MB  00:00:40
+(148/200): ranger_2_5_3_0_37-admin-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                               | 153 MB  00:00:14
+(149/200): ranger_2_5_3_0_37-atlas-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                        |  31 MB  00:00:11
+(150/200): ranger_2_5_3_0_37-hdfs-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                         |  38 MB  00:00:00
+(151/200): ranger_2_5_3_0_37-hive-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                         |  37 MB  00:00:00
+(152/200): ranger_2_5_3_0_37-hbase-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                        |  27 MB  00:00:09
+(153/200): ranger_2_5_3_0_37-kafka-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                        |  59 MB  00:00:20
+(154/200): ranger_2_5_3_0_37-kms-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                                 |  71 MB  00:00:11
+(155/200): ranger_2_5_3_0_37-knox-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                         |  38 MB  00:00:12
+(156/200): ranger_2_5_3_0_37-solr-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                         |  30 MB  00:00:09
+(157/200): ranger_2_5_3_0_37-storm-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                        |  62 MB  00:00:11
+(158/200): ranger_2_5_3_0_37-tagsync-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                             |  39 MB  00:00:10
+(159/200): ranger_2_5_3_0_37-yarn-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                         |  16 MB  00:00:00
+(160/200): slider-0.91.0.2.5.3.0-37.el6.noarch.rpm                                                                                               | 2.5 kB  00:00:00
+(161/200): ranger_2_5_3_0_37-usersync-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                            |  14 MB  00:00:10
+(162/200): spark-1.6.2.2.5.3.0-37.el6.noarch.rpm                                                                                                 | 2.5 kB  00:00:00
+(163/200): slider_2_5_3_0_37-0.91.0.2.5.3.0-37.el6.noarch.rpm                                                                                    |  88 MB  00:00:01
+(164/200): spark-master-1.6.2.2.5.3.0-37.el6.noarch.rpm                                                                                          | 2.5 kB  00:00:00
+(165/200): spark-worker-1.6.2.2.5.3.0-37.el6.noarch.rpm                                                                                          | 2.5 kB  00:00:00
+(166/200): spark-python-1.6.2.2.5.3.0-37.el6.noarch.rpm                                                                                          | 2.5 kB  00:00:00
+(167/200): spark-yarn-shuffle-1.6.2.2.5.3.0-37.el6.noarch.rpm                                                                                    | 2.6 kB  00:00:00
+(168/200): spark2-2.0.0.2.5.3.0-37.el6.noarch.rpm                                                                                                | 2.5 kB  00:00:00
+(169/200): spark2-master-2.0.0.2.5.3.0-37.el6.noarch.rpm                                                                                         | 2.5 kB  00:00:00
+(170/200): spark2-worker-2.0.0.2.5.3.0-37.el6.noarch.rpm                                                                                         | 2.5 kB  00:00:00
+(171/200): spark2-python-2.0.0.2.5.3.0-37.el6.noarch.rpm                                                                                         | 2.5 kB  00:00:00
+(172/200): spark2-yarn-shuffle-2.0.0.2.5.3.0-37.el6.noarch.rpm                                                                                   | 2.6 kB  00:00:00
+(173/200): spark2_2_5_3_0_37-master-2.0.0.2.5.3.0-37.el6.noarch.rpm                                                                              | 4.9 kB  00:00:00
+(174/200): spark2_2_5_3_0_37-python-2.0.0.2.5.3.0-37.el6.noarch.rpm                                                                              | 843 kB  00:00:02
+(175/200): spark2_2_5_3_0_37-worker-2.0.0.2.5.3.0-37.el6.noarch.rpm                                                                              | 4.9 kB  00:00:00
+(176/200): spark2_2_5_3_0_37-yarn-shuffle-2.0.0.2.5.3.0-37.el6.noarch.rpm                                                                        | 6.1 MB  00:00:00
+(177/200): spark_2_5_3_0_37-1.6.2.2.5.3.0-37.el6.noarch.rpm                                                                                      | 260 MB  00:00:06
+(178/200): spark_2_5_3_0_37-master-1.6.2.2.5.3.0-37.el6.noarch.rpm                                                                               | 4.8 kB  00:00:00
+(179/200): spark_2_5_3_0_37-python-1.6.2.2.5.3.0-37.el6.noarch.rpm                                                                               | 675 kB  00:00:00
+(180/200): spark_2_5_3_0_37-worker-1.6.2.2.5.3.0-37.el6.noarch.rpm                                                                               | 4.9 kB  00:00:00
+(181/200): spark_2_5_3_0_37-yarn-shuffle-1.6.2.2.5.3.0-37.el6.noarch.rpm                                                                         | 6.0 MB  00:00:00
+(182/200): sqoop-1.4.6.2.5.3.0-37.el6.noarch.rpm                                                                                                 | 2.5 kB  00:00:00
+(183/200): sqoop-metastore-1.4.6.2.5.3.0-37.el6.noarch.rpm                                                                                       | 2.6 kB  00:00:00
+(184/200): sqoop_2_5_3_0_37-1.4.6.2.5.3.0-37.el6.noarch.rpm                                                                                      |  31 MB  00:00:00
+(185/200): sqoop_2_5_3_0_37-metastore-1.4.6.2.5.3.0-37.el6.noarch.rpm                                                                            | 5.6 kB  00:00:00
+(186/200): storm-1.0.1.2.5.3.0-37.el6.noarch.rpm                                                                                                 | 2.5 kB  00:00:00
+(187/200): storm-slider-client-1.0.1.2.5.3.0-37.el6.noarch.rpm                                                                                   | 2.6 kB  00:00:00
+(188/200): spark2_2_5_3_0_37-2.0.0.2.5.3.0-37.el6.noarch.rpm                                                                                     | 170 MB  00:00:20
+(189/200): storm_2_5_3_0_37-slider-client-1.0.1.2.5.3.0-37.el6.x86_64.rpm                                                                        |  85 MB  00:00:01
+(190/200): tez-0.7.0.2.5.3.0-37.el6.noarch.rpm                                                                                                   | 2.5 kB  00:00:00
+(191/200): tez_2_5_3_0_37-0.7.0.2.5.3.0-37.el6.noarch.rpm                                                                                        |  62 MB  00:00:01
+(192/200): tez_hive2-0.8.4.2.5.3.0-37.el6.noarch.rpm                                                                                             | 2.5 kB  00:00:00
+(193/200): tez_hive2_2_5_3_0_37-0.8.4.2.5.3.0-37.el6.noarch.rpm                                                                                  | 107 MB  00:00:03
+(194/200): zeppelin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                              | 2.5 kB  00:00:00
+(195/200): storm_2_5_3_0_37-1.0.1.2.5.3.0-37.el6.x86_64.rpm                                                                                      | 192 MB  00:00:17
+(196/200): zookeeper-3.4.6.2.5.3.0-37.el6.noarch.rpm                                                                                             | 2.5 kB  00:00:00
+(197/200): zookeeper-server-3.4.6.2.5.3.0-37.el6.noarch.rpm                                                                                      | 2.6 kB  00:00:00
+(198/200): zookeeper_2_5_3_0_37-3.4.6.2.5.3.0-37.el6.noarch.rpm                                                                                  | 8.1 MB  00:00:00
+(199/200): zookeeper_2_5_3_0_37-server-3.4.6.2.5.3.0-37.el6.noarch.rpm                                                                           | 5.5 kB  00:00:00
+(200/200): zeppelin_2_5_3_0_37-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                   | 245 MB  00:00:06
+[root@ip-172-31-12-96 centos7]#
+[root@ip-172-31-12-96 centos7]# reposync -r HDP-2.5.3.0
+warning: /var/www/html/repo/hdp/centos7/HDP-2.5.3.0/vrpms/accumulo/accumulo-1.7.0.2.5.3.0-37.el6.noarch.rpm: Header V4 RSA/SHA1 Signature, key ID 07513cad: NOKEY-- ETA
+Public key for accumulo-1.7.0.2.5.3.0-37.el6.noarch.rpm is not installed
+(1/200): accumulo-1.7.0.2.5.3.0-37.el6.noarch.rpm                                                                                                | 2.5 kB  00:00:00
+(2/200): accumulo-conf-standalone-1.7.0.2.5.3.0-37.el6.noarch.rpm                                                                                | 2.6 kB  00:00:00
+(3/200): accumulo-source-1.7.0.2.5.3.0-37.el6.noarch.rpm                                                                                         | 2.6 kB  00:00:00
+(4/200): accumulo-test-1.7.0.2.5.3.0-37.el6.noarch.rpm                                                                                           | 2.5 kB  00:00:00
+(5/200): accumulo_2_5_3_0_37-conf-standalone-1.7.0.2.5.3.0-37.el6.x86_64.rpm                                                                     | 2.8 kB  00:00:00
+(6/200): accumulo_2_5_3_0_37-source-1.7.0.2.5.3.0-37.el6.x86_64.rpm                                                                              | 3.1 kB  00:00:00
+(7/200): accumulo_2_5_3_0_37-test-1.7.0.2.5.3.0-37.el6.x86_64.rpm                                                                                | 2.5 MB  00:00:04
+(8/200): atlas-metadata-0.7.0.2.5.3.0-37.el6.noarch.rpm                                                                                          | 2.5 kB  00:00:00
+(9/200): atlas-metadata-hive-plugin-0.7.0.2.5.3.0-37.el6.noarch.rpm                                                                              | 2.6 kB  00:00:00
+(10/200): accumulo_2_5_3_0_37-1.7.0.2.5.3.0-37.el6.x86_64.rpm                                                                                    |  16 MB  00:00:08
+(11/200): atlas-metadata_2_5_3_0_37-hive-plugin-0.7.0.2.5.3.0-37.el6.noarch.rpm                                                                  | 173 MB  00:00:03
+(12/200): bigtop-jsvc-1.0.15-37.el6.x86_64.rpm                                                                                                   |  30 kB  00:00:00
+(13/200): bigtop-tomcat-6.0.44-1.el6.noarch.rpm                                                                                                  | 5.5 MB  00:00:04
+(14/200): datafu-1.3.0.2.5.3.0-37.el6.noarch.rpm                                                                                                 | 2.5 kB  00:00:00
+(15/200): datafu_2_5_3_0_37-1.3.0.2.5.3.0-37.el6.noarch.rpm                                                                                      | 2.5 MB  00:00:00
+(16/200): falcon-0.10.0.2.5.3.0-37.el6.noarch.rpm                                                                                                | 2.5 kB  00:00:00
+(17/200): falcon-doc-0.10.0.2.5.3.0-37.el6.noarch.rpm                                                                                            | 2.5 kB  00:00:00
+(18/200): atlas-metadata_2_5_3_0_37-0.7.0.2.5.3.0-37.el6.noarch.rpm                                                                              | 122 MB  00:00:15
+(19/200): falcon_2_5_3_0_37-doc-0.10.0.2.5.3.0-37.el6.noarch.rpm                                                                                 | 765 kB  00:00:02
+(20/200): flume-1.5.2.2.5.3.0-37.el6.noarch.rpm                                                                                                  | 2.5 kB  00:00:00
+(21/200): flume-agent-1.5.2.2.5.3.0-37.el6.noarch.rpm                                                                                            | 2.5 kB  00:00:00
+(22/200): flume_2_5_3_0_37-1.5.2.2.5.3.0-37.el6.noarch.rpm                                                                                       |  42 MB  00:00:00
+(23/200): flume_2_5_3_0_37-agent-1.5.2.2.5.3.0-37.el6.noarch.rpm                                                                                 | 6.3 kB  00:00:00
+(24/200): hadoop-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                                 | 2.5 kB  00:00:00
+(25/200): hadoop-client-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                          | 2.5 kB  00:00:00
+(26/200): hadoop-conf-pseudo-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                     | 2.6 kB  00:00:00
+(27/200): hadoop-doc-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                             | 2.5 kB  00:00:00
+(28/200): hadoop-hdfs-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                            | 2.5 kB  00:00:00
+(29/200): hadoop-hdfs-datanode-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                   | 2.6 kB  00:00:00
+(30/200): hadoop-hdfs-fuse-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                       | 2.6 kB  00:00:00
+(31/200): hadoop-hdfs-journalnode-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                | 2.6 kB  00:00:00
+(32/200): hadoop-hdfs-namenode-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                   | 2.6 kB  00:00:00
+(33/200): hadoop-hdfs-secondarynamenode-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                          | 2.6 kB  00:00:00
+(34/200): hadoop-hdfs-zkfc-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                       | 2.6 kB  00:00:00
+(35/200): hadoop-httpfs-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                          | 2.5 kB  00:00:00
+(36/200): hadoop-httpfs-server-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                   | 2.6 kB  00:00:00
+(37/200): hadoop-libhdfs-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                         | 2.5 kB  00:00:00
+(38/200): hadoop-mapreduce-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                       | 2.6 kB  00:00:00
+(39/200): hadoop-mapreduce-historyserver-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                         | 2.6 kB  00:00:00
+(40/200): hadoop-source-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                          | 2.5 kB  00:00:00
+(41/200): hadoop-yarn-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                            | 2.5 kB  00:00:00
+(42/200): hadoop-yarn-nodemanager-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                | 2.6 kB  00:00:00
+(43/200): hadoop-yarn-proxyserver-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                                | 2.6 kB  00:00:00
+(44/200): hadoop-yarn-resourcemanager-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                            | 2.6 kB  00:00:00
+(45/200): hadoop-yarn-timelineserver-2.7.3.2.5.3.0-37.el6.noarch.rpm                                                                             | 2.6 kB  00:00:00
+(46/200): hadoop_2_5_3_0_37-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                                      | 224 MB  00:00:05
+(47/200): hadoop_2_5_3_0_37-client-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                               |  24 kB  00:00:00
+(48/200): hadoop_2_5_3_0_37-conf-pseudo-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                          |  21 kB  00:00:00
+(49/200): hadoop_2_5_3_0_37-doc-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                                  | 436 kB  00:00:02
+(50/200): hadoop_2_5_3_0_37-hdfs-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                                 |  23 MB  00:00:00
+(51/200): hadoop_2_5_3_0_37-hdfs-datanode-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                        | 5.7 kB  00:00:00
+(52/200): hadoop_2_5_3_0_37-hdfs-fuse-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                            |  50 kB  00:00:00
+(53/200): hadoop_2_5_3_0_37-hdfs-journalnode-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                     | 5.6 kB  00:00:00
+(54/200): hadoop_2_5_3_0_37-hdfs-namenode-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                        | 5.7 kB  00:00:00
+(55/200): hadoop_2_5_3_0_37-hdfs-secondarynamenode-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                               | 5.6 kB  00:00:00
+(56/200): falcon_2_5_3_0_37-0.10.0.2.5.3.0-37.el6.noarch.rpm                                                                                     | 298 MB  00:00:27
+(57/200): hadoop_2_5_3_0_37-hdfs-zkfc-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                            | 5.4 kB  00:00:03
+(58/200): hadoop_2_5_3_0_37-httpfs-server-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                        | 5.1 kB  00:00:00
+(59/200): hadoop_2_5_3_0_37-libhdfs-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                              |  80 kB  00:00:00
+(60/200): hadoop_2_5_3_0_37-mapreduce-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                            |  32 MB  00:00:00
+(61/200): hadoop_2_5_3_0_37-mapreduce-historyserver-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                              | 5.9 kB  00:00:00
+(62/200): hadoop_2_5_3_0_37-httpfs-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                               |  32 MB  00:00:09
+(63/200): hadoop_2_5_3_0_37-yarn-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                                 |  28 MB  00:00:00
+(64/200): hadoop_2_5_3_0_37-source-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                               |  18 MB  00:00:08
+(65/200): hadoop_2_5_3_0_37-yarn-nodemanager-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                     | 5.6 kB  00:00:00
+(66/200): hadoop_2_5_3_0_37-yarn-resourcemanager-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                 | 5.5 kB  00:00:00
+(67/200): hadoop_2_5_3_0_37-yarn-proxyserver-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                     | 5.2 kB  00:00:00
+(68/200): hadoop_2_5_3_0_37-yarn-timelineserver-2.7.3.2.5.3.0-37.el6.x86_64.rpm                                                                  | 5.6 kB  00:00:00
+(69/200): hadooplzo-native-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                       | 2.6 kB  00:00:00
+(70/200): hadooplzo-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                              | 2.5 kB  00:00:00
+(71/200): hadooplzo_2_5_3_0_37-native-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                            |  31 kB  00:00:00
+(72/200): hbase-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                                  | 2.5 kB  00:00:00
+(73/200): hbase-doc-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                              | 2.5 kB  00:00:00
+(74/200): hbase-master-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                           | 2.5 kB  00:00:00
+(75/200): hbase-regionserver-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                     | 2.6 kB  00:00:00
+(76/200): hadooplzo_2_5_3_0_37-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                                   | 278 kB  00:00:01
+(77/200): hbase-rest-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                             | 2.5 kB  00:00:00
+(78/200): hbase-thrift-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                           | 2.5 kB  00:00:00
+(79/200): hbase-thrift2-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                          | 2.5 kB  00:00:00
+(80/200): hbase_2_5_3_0_37-doc-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                   |  15 MB  00:00:07
+(81/200): hbase_2_5_3_0_37-master-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                | 5.1 kB  00:00:00
+(82/200): hbase_2_5_3_0_37-regionserver-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                          | 7.4 kB  00:00:00
+(83/200): hbase_2_5_3_0_37-rest-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                  | 5.0 kB  00:00:00
+(84/200): hbase_2_5_3_0_37-thrift-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                | 5.5 kB  00:00:00
+(85/200): hbase_2_5_3_0_37-thrift2-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                               | 5.1 kB  00:00:00
+(86/200): hdp-select-2.5.3.0-37.el6.noarch.rpm                                                                                                   |  10 kB  00:00:00
+(87/200): hive-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                                                | 2.5 kB  00:00:00
+(88/200): hive-hcatalog-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                                       | 2.6 kB  00:00:00
+(89/200): hive-hcatalog-server-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                                | 2.6 kB  00:00:00
+(90/200): hive-jdbc-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                                           | 2.5 kB  00:00:00
+(91/200): hive-metastore-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                                      | 2.6 kB  00:00:00
+(92/200): hive-server-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                                         | 2.5 kB  00:00:00
+(93/200): hbase_2_5_3_0_37-1.1.2.2.5.3.0-37.el6.noarch.rpm                                                                                       |  72 MB  00:00:12
+(94/200): hive-server2-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                                        | 2.6 kB  00:00:00
+(95/200): hive-webhcat-server-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                                 | 2.6 kB  00:00:00
+(96/200): hive-webhcat-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                                        | 2.6 kB  00:00:00
+(97/200): hive2-jdbc-2.1.0.2.5.3.0-37.el6.noarch.rpm                                                                                             | 2.5 kB  00:00:00
+(98/200): hive2-2.1.0.2.5.3.0-37.el6.noarch.rpm                                                                                                  | 2.5 kB  00:00:00
+(99/200): hive2_2_5_3_0_37-jdbc-2.1.0.2.5.3.0-37.el6.noarch.rpm                                                                                  |  56 MB  00:00:01
+(100/200): hive2_2_5_3_0_37-2.1.0.2.5.3.0-37.el6.noarch.rpm                                                                                      |  91 MB  00:00:02
+(101/200): hive_2_5_3_0_37-hcatalog-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                           | 395 kB  00:00:00
+(102/200): hive_2_5_3_0_37-hcatalog-server-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                    | 5.5 kB  00:00:00
+(103/200): hive_2_5_3_0_37-jdbc-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                               |  44 MB  00:00:01
+(104/200): hive_2_5_3_0_37-metastore-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                          | 5.6 kB  00:00:00
+(105/200): hive_2_5_3_0_37-server-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                             | 5.6 kB  00:00:00
+(106/200): hive_2_5_3_0_37-server2-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                            | 5.6 kB  00:00:00
+(107/200): hive_2_5_3_0_37-webhcat-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                            | 3.8 MB  00:00:00
+(108/200): hive_2_5_3_0_37-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                                    | 153 MB  00:00:03
+(109/200): hive_2_5_3_0_37-webhcat-server-1.2.1000.2.5.3.0-37.el6.noarch.rpm                                                                     | 5.4 kB  00:00:00
+(110/200): hue-2.6.1.2.5.3.0-37.el6.x86_64.rpm                                                                                                   | 2.9 kB  00:00:01
+(111/200): hue-beeswax-2.6.1.2.5.3.0-37.el6.x86_64.rpm                                                                                           | 413 kB  00:00:02
+(112/200): hue-hcatalog-2.6.1.2.5.3.0-37.el6.x86_64.rpm                                                                                          |  76 kB  00:00:00
+(113/200): hue-oozie-2.6.1.2.5.3.0-37.el6.x86_64.rpm                                                                                             | 655 kB  00:00:02
+(114/200): hue-pig-2.6.1.2.5.3.0-37.el6.x86_64.rpm                                                                                               | 123 kB  00:00:01
+(115/200): hue-server-2.6.1.2.5.3.0-37.el6.x86_64.rpm                                                                                            | 5.2 kB  00:00:00
+(116/200): kafka-0.10.0.2.5.3.0-37.el6.noarch.rpm                                                                                                | 2.5 kB  00:00:00
+(117/200): hue-common-2.6.1.2.5.3.0-37.el6.x86_64.rpm                                                                                            |  36 MB  00:00:09
+(118/200): knox-0.9.0.2.5.3.0-37.el6.noarch.rpm                                                                                                  | 2.5 kB  00:00:00
+(119/200): kafka_2_5_3_0_37-0.10.0.2.5.3.0-37.el6.noarch.rpm                                                                                     |  28 MB  00:00:09
+(120/200): livy-0.2.0.2.5.3.0-37.el6.noarch.rpm                                                                                                  | 2.5 kB  00:00:00
+(121/200): knox_2_5_3_0_37-0.9.0.2.5.3.0-37.el6.noarch.rpm                                                                                       |  65 MB  00:00:12
+(122/200): mahout-0.9.0.2.5.3.0-37.el6.noarch.rpm                                                                                                | 2.5 kB  00:00:00
+(123/200): mahout-doc-0.9.0.2.5.3.0-37.el6.noarch.rpm                                                                                            | 2.5 kB  00:00:00
+(124/200): livy_2_5_3_0_37-0.2.0.2.5.3.0-37.el6.noarch.rpm                                                                                       |  67 MB  00:00:11
+(125/200): mahout_2_5_3_0_37-doc-0.9.0.2.5.3.0-37.el6.noarch.rpm                                                                                 | 2.6 kB  00:00:00
+(126/200): oozie-4.2.0.2.5.3.0-37.el6.noarch.rpm                                                                                                 | 2.5 kB  00:00:00
+(127/200): oozie-client-4.2.0.2.5.3.0-37.el6.noarch.rpm                                                                                          | 2.5 kB  00:00:00
+(128/200): mahout_2_5_3_0_37-0.9.0.2.5.3.0-37.el6.noarch.rpm                                                                                     | 172 MB  00:00:15
+(129/200): oozie_2_5_3_0_37-client-4.2.0.2.5.3.0-37.el6.noarch.rpm                                                                               |  31 MB  00:00:08
+(130/200): phoenix-4.7.0.2.5.3.0-37.el6.noarch.rpm                                                                                               | 2.5 kB  00:00:00
+(131/200): oozie_2_5_3_0_37-4.2.0.2.5.3.0-37.el6.noarch.rpm                                                                                      | 618 MB  00:00:44
+(132/200): pig-0.16.0.2.5.3.0-37.el6.noarch.rpm                                                                                                  | 2.5 kB  00:00:00
+(133/200): pig_2_5_3_0_37-0.16.0.2.5.3.0-37.el6.noarch.rpm                                                                                       | 223 MB  00:00:04
+(134/200): ranger-admin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                          | 2.5 kB  00:00:00
+(135/200): ranger-atlas-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                   | 2.6 kB  00:00:00
+(136/200): ranger-hbase-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                   | 2.6 kB  00:00:00
+(137/200): ranger-hdfs-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                    | 2.6 kB  00:00:00
+(138/200): ranger-hive-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                    | 2.6 kB  00:00:00
+(139/200): ranger-kafka-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                   | 2.6 kB  00:00:00
+(140/200): ranger-kms-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                            | 2.5 kB  00:00:00
+(141/200): ranger-knox-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                    | 2.6 kB  00:00:00
+(142/200): ranger-solr-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                    | 2.6 kB  00:00:00
+(143/200): ranger-storm-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                   | 2.6 kB  00:00:00
+(144/200): ranger-tagsync-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                        | 2.5 kB  00:00:00
+(145/200): ranger-usersync-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                       | 2.6 kB  00:00:00
+(146/200): ranger-yarn-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                    | 2.6 kB  00:00:00
+(147/200): phoenix_2_5_3_0_37-4.7.0.2.5.3.0-37.el6.noarch.rpm                                                                                    | 208 MB  00:00:40
+(148/200): ranger_2_5_3_0_37-admin-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                               | 153 MB  00:00:14
+(149/200): ranger_2_5_3_0_37-atlas-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                        |  31 MB  00:00:11
+(150/200): ranger_2_5_3_0_37-hdfs-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                         |  38 MB  00:00:00
+(151/200): ranger_2_5_3_0_37-hive-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                         |  37 MB  00:00:00
+(152/200): ranger_2_5_3_0_37-hbase-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                        |  27 MB  00:00:09
+(153/200): ranger_2_5_3_0_37-kafka-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                        |  59 MB  00:00:20
+(154/200): ranger_2_5_3_0_37-kms-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                                 |  71 MB  00:00:11
+(155/200): ranger_2_5_3_0_37-knox-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                         |  38 MB  00:00:12
+(156/200): ranger_2_5_3_0_37-solr-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                         |  30 MB  00:00:09
+(157/200): ranger_2_5_3_0_37-storm-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                        |  62 MB  00:00:11
+(158/200): ranger_2_5_3_0_37-tagsync-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                             |  39 MB  00:00:10
+(159/200): ranger_2_5_3_0_37-yarn-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                         |  16 MB  00:00:00
+(160/200): slider-0.91.0.2.5.3.0-37.el6.noarch.rpm                                                                                               | 2.5 kB  00:00:00
+(161/200): ranger_2_5_3_0_37-usersync-0.6.0.2.5.3.0-37.el6.x86_64.rpm                                                                            |  14 MB  00:00:10
+(162/200): spark-1.6.2.2.5.3.0-37.el6.noarch.rpm                                                                                                 | 2.5 kB  00:00:00
+(163/200): slider_2_5_3_0_37-0.91.0.2.5.3.0-37.el6.noarch.rpm                                                                                    |  88 MB  00:00:01
+(164/200): spark-master-1.6.2.2.5.3.0-37.el6.noarch.rpm                                                                                          | 2.5 kB  00:00:00
+(165/200): spark-worker-1.6.2.2.5.3.0-37.el6.noarch.rpm                                                                                          | 2.5 kB  00:00:00
+(166/200): spark-python-1.6.2.2.5.3.0-37.el6.noarch.rpm                                                                                          | 2.5 kB  00:00:00
+(167/200): spark-yarn-shuffle-1.6.2.2.5.3.0-37.el6.noarch.rpm                                                                                    | 2.6 kB  00:00:00
+(168/200): spark2-2.0.0.2.5.3.0-37.el6.noarch.rpm                                                                                                | 2.5 kB  00:00:00
+(169/200): spark2-master-2.0.0.2.5.3.0-37.el6.noarch.rpm                                                                                         | 2.5 kB  00:00:00
+(170/200): spark2-worker-2.0.0.2.5.3.0-37.el6.noarch.rpm                                                                                         | 2.5 kB  00:00:00
+(171/200): spark2-python-2.0.0.2.5.3.0-37.el6.noarch.rpm                                                                                         | 2.5 kB  00:00:00
+(172/200): spark2-yarn-shuffle-2.0.0.2.5.3.0-37.el6.noarch.rpm                                                                                   | 2.6 kB  00:00:00
+(173/200): spark2_2_5_3_0_37-master-2.0.0.2.5.3.0-37.el6.noarch.rpm                                                                              | 4.9 kB  00:00:00
+(174/200): spark2_2_5_3_0_37-python-2.0.0.2.5.3.0-37.el6.noarch.rpm                                                                              | 843 kB  00:00:02
+(175/200): spark2_2_5_3_0_37-worker-2.0.0.2.5.3.0-37.el6.noarch.rpm                                                                              | 4.9 kB  00:00:00
+(176/200): spark2_2_5_3_0_37-yarn-shuffle-2.0.0.2.5.3.0-37.el6.noarch.rpm                                                                        | 6.1 MB  00:00:00
+(177/200): spark_2_5_3_0_37-1.6.2.2.5.3.0-37.el6.noarch.rpm                                                                                      | 260 MB  00:00:06
+(178/200): spark_2_5_3_0_37-master-1.6.2.2.5.3.0-37.el6.noarch.rpm                                                                               | 4.8 kB  00:00:00
+(179/200): spark_2_5_3_0_37-python-1.6.2.2.5.3.0-37.el6.noarch.rpm                                                                               | 675 kB  00:00:00
+(180/200): spark_2_5_3_0_37-worker-1.6.2.2.5.3.0-37.el6.noarch.rpm                                                                               | 4.9 kB  00:00:00
+(181/200): spark_2_5_3_0_37-yarn-shuffle-1.6.2.2.5.3.0-37.el6.noarch.rpm                                                                         | 6.0 MB  00:00:00
+(182/200): sqoop-1.4.6.2.5.3.0-37.el6.noarch.rpm                                                                                                 | 2.5 kB  00:00:00
+(183/200): sqoop-metastore-1.4.6.2.5.3.0-37.el6.noarch.rpm                                                                                       | 2.6 kB  00:00:00
+(184/200): sqoop_2_5_3_0_37-1.4.6.2.5.3.0-37.el6.noarch.rpm                                                                                      |  31 MB  00:00:00
+(185/200): sqoop_2_5_3_0_37-metastore-1.4.6.2.5.3.0-37.el6.noarch.rpm                                                                            | 5.6 kB  00:00:00
+(186/200): storm-1.0.1.2.5.3.0-37.el6.noarch.rpm                                                                                                 | 2.5 kB  00:00:00
+(187/200): storm-slider-client-1.0.1.2.5.3.0-37.el6.noarch.rpm                                                                                   | 2.6 kB  00:00:00
+(188/200): spark2_2_5_3_0_37-2.0.0.2.5.3.0-37.el6.noarch.rpm                                                                                     | 170 MB  00:00:20
+(189/200): storm_2_5_3_0_37-slider-client-1.0.1.2.5.3.0-37.el6.x86_64.rpm                                                                        |  85 MB  00:00:01
+(190/200): tez-0.7.0.2.5.3.0-37.el6.noarch.rpm                                                                                                   | 2.5 kB  00:00:00
+(191/200): tez_2_5_3_0_37-0.7.0.2.5.3.0-37.el6.noarch.rpm                                                                                        |  62 MB  00:00:01
+(192/200): tez_hive2-0.8.4.2.5.3.0-37.el6.noarch.rpm                                                                                             | 2.5 kB  00:00:00
+(193/200): tez_hive2_2_5_3_0_37-0.8.4.2.5.3.0-37.el6.noarch.rpm                                                                                  | 107 MB  00:00:03
+(194/200): zeppelin-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                              | 2.5 kB  00:00:00
+(195/200): storm_2_5_3_0_37-1.0.1.2.5.3.0-37.el6.x86_64.rpm                                                                                      | 192 MB  00:00:17
+(196/200): zookeeper-3.4.6.2.5.3.0-37.el6.noarch.rpm                                                                                             | 2.5 kB  00:00:00
+(197/200): zookeeper-server-3.4.6.2.5.3.0-37.el6.noarch.rpm                                                                                      | 2.6 kB  00:00:00
+(198/200): zookeeper_2_5_3_0_37-3.4.6.2.5.3.0-37.el6.noarch.rpm                                                                                  | 8.1 MB  00:00:00
+(199/200): zookeeper_2_5_3_0_37-server-3.4.6.2.5.3.0-37.el6.noarch.rpm                                                                           | 5.5 kB  00:00:00
+(200/200): zeppelin_2_5_3_0_37-0.6.0.2.5.3.0-37.el6.noarch.rpm                                                                                   | 245 MB  00:00:06
+[root@ip-172-31-12-96 centos7]#
+[root@ip-172-31-12-96 centos7]#
+[root@ip-172-31-12-96 centos7]# reposync -r HDP-UTILS-1.1.0.21
+warning: /var/www/html/repo/hdp/centos7/HDP-UTILS-1.1.0.21/R/R-3.2.3-4.el7.x86_64.rpm: Header V4 RSA/SHA1 Signature, key ID 07513cad: NOKEY0 B/s |    0 B  --:--:-- ETA
+Public key for R-3.2.3-4.el7.x86_64.rpm is not installed
+(1/64): R-3.2.3-4.el7.x86_64.rpm                                                                                                                 |  24 kB  00:00:00
+(2/64): R-core-devel-3.2.3-4.el7.x86_64.rpm                                                                                                      |  98 kB  00:00:00
+(3/64): R-devel-3.2.3-4.el7.x86_64.rpm                                                                                                           |  23 kB  00:00:00
+(4/64): R-java-3.2.3-4.el7.x86_64.rpm                                                                                                            |  25 kB  00:00:00
+(5/64): R-java-devel-3.2.3-4.el7.x86_64.rpm                                                                                                      |  24 kB  00:00:00
+(6/64): compat-readline5-5.2-17.1.el6.x86_64.rpm                                                                                                 | 130 kB  00:00:01
+(7/64): epel-release-6-8.noarch.rpm                                                                                                              |  14 kB  00:00:00
+(8/64): extjs-2.2-1.noarch.rpm                                                                                                                   | 6.1 MB  00:00:00
+(9/64): fping-2.4b2-10.el6.x86_64.rpm                                                                                                            |  31 kB  00:00:00
+(10/64): ganglia-debuginfo-3.5.0-99.x86_64.rpm                                                                                                   | 388 kB  00:00:02
+(11/64): ganglia-devel-3.5.0-99.x86_64.rpm                                                                                                       |  50 kB  00:00:00
+(12/64): ganglia-gmetad-3.5.0-99.x86_64.rpm                                                                                                      |  40 kB  00:00:00
+(13/64): ganglia-gmond-3.5.0-99.x86_64.rpm                                                                                                       | 114 kB  00:00:01
+(14/64): R-core-3.2.3-4.el7.x86_64.rpm                                                                                                           |  50 MB  00:00:11
+(15/64): ganglia-gmond-modules-python-3.5.0-99.x86_64.rpm                                                                                        | 106 kB  00:00:01
+(16/64): hadoop-lzo-0.6.0-1.x86_64.rpm                                                                                                           |  59 kB  00:00:00
+(17/64): hadoop-lzo-native-0.6.0-1.x86_64.rpm                                                                                                    |  22 kB  00:00:00
+(18/64): ganglia-web-3.5.7-99.noarch.rpm                                                                                                         | 1.3 MB  00:00:03
+(19/64): libRmath-3.2.3-4.el7.x86_64.rpm                                                                                                         | 127 kB  00:00:02
+(20/64): libRmath-devel-3.2.3-4.el7.x86_64.rpm                                                                                                   |  29 kB  00:00:00
+(21/64): libganglia-3.5.0-99.x86_64.rpm                                                                                                          |  43 kB  00:00:00
+(22/64): libconfuse-2.7-4.el6.x86_64.rpm                                                                                                         |  79 kB  00:00:00
+(23/64): lua-rrdtool-1.4.5-1.el6.x86_64.rpm                                                                                                      |  16 kB  00:00:00
+(24/64): libgenders-1.14-2.el6.rf.x86_64.rpm                                                                                                     | 170 kB  00:00:00
+(25/64): lzo-2.06-1.el6.x86_64.rpm                                                                                                               |  55 kB  00:00:00
+(26/64): lzo-debuginfo-2.06-1.el6.x86_64.rpm                                                                                                     | 171 kB  00:00:01
+(27/64): lzo-devel-2.06-1.el6.x86_64.rpm                                                                                                         |  31 kB  00:00:00
+(28/64): lzo-minilzo-2.06-1.el6.x86_64.rpm                                                                                                       |  12 kB  00:00:00
+(29/64): mysql-community-release-el7-5.noarch.rpm                                                                                                | 6.0 kB  00:00:00
+(30/64): mysql-connector-java-5.1.29-1.noarch.rpm                                                                                                | 819 kB  00:00:02
+(31/64): mysql-connector-java-5.1.37-1.noarch.rpm                                                                                                | 916 kB  00:00:02
+(32/64): nagios-3.5.0-99.x86_64.rpm                                                                                                              | 283 kB  00:00:01
+(33/64): nagios-debuginfo-3.5.0-99.x86_64.rpm                                                                                                    |  70 kB  00:00:00
+(34/64): nagios-devel-3.5.0-99.x86_64.rpm                                                                                                        | 8.1 kB  00:00:00
+(35/64): nagios-plugins-1.4.9-1.x86_64.rpm                                                                                                       | 399 kB  00:00:01
+(36/64): nagios-plugins-debuginfo-1.4.9-1.x86_64.rpm                                                                                             | 692 kB  00:00:02
+(37/64): nagios-www-3.5.0-99.x86_64.rpm                                                                                                          | 940 kB  00:00:02
+(38/64): openblas-0.2.19-4.el7.x86_64.rpm                                                                                                        | 4.0 MB  00:00:00
+(39/64): openblas-Rblas-0.2.19-4.el7.x86_64.rpm                                                                                                  | 4.0 MB  00:00:05
+(40/64): openblas-devel-0.2.19-4.el7.x86_64.rpm                                                                                                  |  80 kB  00:00:00
+(41/64): openblas-openmp-0.2.19-4.el7.x86_64.rpm                                                                                                 | 4.1 MB  00:00:00
+(42/64): openblas-openmp64-0.2.19-4.el7.x86_64.rpm                                                                                               | 4.0 MB  00:00:00
+(43/64): openblas-openmp64_-0.2.19-4.el7.x86_64.rpm                                                                                              | 4.0 MB  00:00:00
+(44/64): openblas-serial64-0.2.19-4.el7.x86_64.rpm                                                                                               | 3.9 MB  00:00:00
+(45/64): openblas-serial64_-0.2.19-4.el7.x86_64.rpm                                                                                              | 3.9 MB  00:00:00
+(46/64): lucidworks-hdpsearch-2.3-4.noarch.rpm                                                                                                   | 681 MB  00:00:46
+(47/64): openblas-static-0.2.19-4.el7.x86_64.rpm                                                                                                 |  46 MB  00:00:22
+(48/64): openblas-threads-0.2.19-4.el7.x86_64.rpm                                                                                                | 4.1 MB  00:00:00
+(49/64): openblas-threads64-0.2.19-4.el7.x86_64.rpm                                                                                              | 4.0 MB  00:00:00
+(50/64): openblas-threads64_-0.2.19-4.el7.x86_64.rpm                                                                                             | 4.0 MB  00:00:00
+(51/64): perl-Crypt-DES-2.05-9.el6.x86_64.rpm                                                                                                    |  19 kB  00:00:00
+(52/64): pdsh-2.27-1.el6.rf.x86_64.rpm                                                                                                           | 147 kB  00:00:01
+(53/64): perl-Net-SNMP-5.2.0-4.el6.noarch.rpm                                                                                                    | 100 kB  00:00:01
+(54/64): perl-rrdtool-1.4.5-1.el6.x86_64.rpm                                                                                                     |  30 kB  00:00:00
+(55/64): python-rrdtool-1.4.5-1.el6.x86_64.rpm                                                                                                   |  24 kB  00:00:00
+(56/64): rrdtool-1.4.5-1.el6.x86_64.rpm                                                                                                          | 452 kB  00:00:02
+(57/64): rrdtool-debuginfo-1.4.5-1.el6.x86_64.rpm                                                                                                | 589 kB  00:00:02
+(58/64): ruby-rrdtool-1.4.5-1.el6.x86_64.rpm                                                                                                     |  14 kB  00:00:00
+(59/64): rrdtool-devel-1.4.5-1.el6.x86_64.rpm                                                                                                    | 198 kB  00:00:01
+(60/64): snappy-1.1.0-3.el7.i686.rpm                                                                                                             |  40 kB  00:00:00
+(61/64): snappy-1.1.0-3.el7.x86_64.rpm                                                                                                           |  40 kB  00:00:00
+(62/64): snappy-devel-1.1.0-3.el7.x86_64.rpm                                                                                                     |  14 kB  00:00:00
+(63/64): tcl-rrdtool-1.4.5-1.el6.x86_64.rpm                                                                                                      |  17 kB  00:00:00
+(64/64): snappy-devel-1.1.0-3.el7.i686.rpm                                                                                                       |  14 kB  00:00:01
+
+[root@ip-172-31-12-96 centos7]# createrepo -v /var/www/html/repo/hdp/centos7/HDP-2.5.3.0
+Spawning worker 0 with 200 pkgs
+Worker 0: reading accumulo/accumulo_2_5_3_0_37-1.7.0.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading accumulo/accumulo_2_5_3_0_37-conf-standalone-1.7.0.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading accumulo/accumulo_2_5_3_0_37-source-1.7.0.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading accumulo/accumulo_2_5_3_0_37-test-1.7.0.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading atlas/atlas-metadata_2_5_3_0_37-0.7.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading atlas/atlas-metadata_2_5_3_0_37-hive-plugin-0.7.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading bigtop-jsvc/bigtop-jsvc-1.0.15-37.el6.x86_64.rpm
+Worker 0: reading bigtop-tomcat/bigtop-tomcat-6.0.44-1.el6.noarch.rpm
+Worker 0: reading datafu/datafu_2_5_3_0_37-1.3.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading falcon/falcon_2_5_3_0_37-0.10.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading falcon/falcon_2_5_3_0_37-doc-0.10.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading flume/flume_2_5_3_0_37-1.5.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading flume/flume_2_5_3_0_37-agent-1.5.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-client-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-conf-pseudo-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-doc-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-hdfs-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-hdfs-datanode-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-hdfs-fuse-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-hdfs-journalnode-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-hdfs-namenode-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-hdfs-secondarynamenode-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-hdfs-zkfc-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-httpfs-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-httpfs-server-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-libhdfs-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-mapreduce-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-mapreduce-historyserver-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-source-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-yarn-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-yarn-nodemanager-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-yarn-proxyserver-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-yarn-resourcemanager-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadoop/hadoop_2_5_3_0_37-yarn-timelineserver-2.7.3.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadooplzo/hadooplzo_2_5_3_0_37-0.6.0.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hadooplzo/hadooplzo_2_5_3_0_37-native-0.6.0.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hbase/hbase_2_5_3_0_37-1.1.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading hbase/hbase_2_5_3_0_37-doc-1.1.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading hbase/hbase_2_5_3_0_37-master-1.1.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading hbase/hbase_2_5_3_0_37-regionserver-1.1.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading hbase/hbase_2_5_3_0_37-rest-1.1.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading hbase/hbase_2_5_3_0_37-thrift-1.1.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading hbase/hbase_2_5_3_0_37-thrift2-1.1.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading hdp-select/hdp-select-2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading hive/hive_2_5_3_0_37-1.2.1000.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading hive/hive_2_5_3_0_37-hcatalog-1.2.1000.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading hive/hive_2_5_3_0_37-hcatalog-server-1.2.1000.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading hive/hive_2_5_3_0_37-jdbc-1.2.1000.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading hive/hive_2_5_3_0_37-metastore-1.2.1000.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading hive/hive_2_5_3_0_37-server-1.2.1000.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading hive/hive_2_5_3_0_37-server2-1.2.1000.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading hive/hive_2_5_3_0_37-webhcat-1.2.1000.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading hive/hive_2_5_3_0_37-webhcat-server-1.2.1000.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading hive2/hive2_2_5_3_0_37-2.1.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading hive2/hive2_2_5_3_0_37-jdbc-2.1.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading hue/hue-2.6.1.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hue/hue-beeswax-2.6.1.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hue/hue-common-2.6.1.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hue/hue-hcatalog-2.6.1.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hue/hue-oozie-2.6.1.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hue/hue-pig-2.6.1.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading hue/hue-server-2.6.1.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading kafka/kafka_2_5_3_0_37-0.10.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading knox/knox_2_5_3_0_37-0.9.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading livy/livy_2_5_3_0_37-0.2.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading mahout/mahout_2_5_3_0_37-0.9.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading mahout/mahout_2_5_3_0_37-doc-0.9.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading oozie/oozie_2_5_3_0_37-4.2.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading oozie/oozie_2_5_3_0_37-client-4.2.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading phoenix/phoenix_2_5_3_0_37-4.7.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading pig/pig_2_5_3_0_37-0.16.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading ranger/ranger_2_5_3_0_37-admin-0.6.0.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading ranger/ranger_2_5_3_0_37-atlas-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading ranger/ranger_2_5_3_0_37-hbase-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading ranger/ranger_2_5_3_0_37-hdfs-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading ranger/ranger_2_5_3_0_37-hive-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading ranger/ranger_2_5_3_0_37-kafka-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading ranger/ranger_2_5_3_0_37-kms-0.6.0.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading ranger/ranger_2_5_3_0_37-knox-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading ranger/ranger_2_5_3_0_37-solr-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading ranger/ranger_2_5_3_0_37-storm-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading ranger/ranger_2_5_3_0_37-tagsync-0.6.0.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading ranger/ranger_2_5_3_0_37-usersync-0.6.0.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading ranger/ranger_2_5_3_0_37-yarn-plugin-0.6.0.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading slider/slider_2_5_3_0_37-0.91.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading spark/spark_2_5_3_0_37-1.6.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading spark/spark_2_5_3_0_37-master-1.6.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading spark/spark_2_5_3_0_37-python-1.6.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading spark/spark_2_5_3_0_37-worker-1.6.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading spark/spark_2_5_3_0_37-yarn-shuffle-1.6.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading spark2/spark2_2_5_3_0_37-2.0.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading spark2/spark2_2_5_3_0_37-master-2.0.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading spark2/spark2_2_5_3_0_37-python-2.0.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading spark2/spark2_2_5_3_0_37-worker-2.0.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading spark2/spark2_2_5_3_0_37-yarn-shuffle-2.0.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading sqoop/sqoop_2_5_3_0_37-1.4.6.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading sqoop/sqoop_2_5_3_0_37-metastore-1.4.6.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading storm/storm_2_5_3_0_37-1.0.1.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading storm/storm_2_5_3_0_37-slider-client-1.0.1.2.5.3.0-37.el6.x86_64.rpm
+Worker 0: reading tez/tez_2_5_3_0_37-0.7.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading tez_hive2/tez_hive2_2_5_3_0_37-0.8.4.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/accumulo/accumulo-1.7.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/accumulo/accumulo-conf-standalone-1.7.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/accumulo/accumulo-source-1.7.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/accumulo/accumulo-test-1.7.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/atlas/atlas-metadata-0.7.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/atlas/atlas-metadata-hive-plugin-0.7.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/datafu/datafu-1.3.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/falcon/falcon-0.10.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/falcon/falcon-doc-0.10.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/flume/flume-1.5.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/flume/flume-agent-1.5.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-client-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-conf-pseudo-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-doc-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-hdfs-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-hdfs-datanode-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-hdfs-fuse-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-hdfs-journalnode-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-hdfs-namenode-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-hdfs-secondarynamenode-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-hdfs-zkfc-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-httpfs-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-httpfs-server-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-libhdfs-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-mapreduce-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-mapreduce-historyserver-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-source-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-yarn-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-yarn-nodemanager-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-yarn-proxyserver-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-yarn-resourcemanager-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadoop/hadoop-yarn-timelineserver-2.7.3.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadooplzo/hadooplzo-0.6.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hadooplzo/hadooplzo-native-0.6.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hbase/hbase-1.1.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hbase/hbase-doc-1.1.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hbase/hbase-master-1.1.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hbase/hbase-regionserver-1.1.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hbase/hbase-rest-1.1.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hbase/hbase-thrift-1.1.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hbase/hbase-thrift2-1.1.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hive/hive-1.2.1000.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hive/hive-hcatalog-1.2.1000.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hive/hive-hcatalog-server-1.2.1000.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hive/hive-jdbc-1.2.1000.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hive/hive-metastore-1.2.1000.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hive/hive-server-1.2.1000.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hive/hive-server2-1.2.1000.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hive/hive-webhcat-1.2.1000.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hive/hive-webhcat-server-1.2.1000.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hive2/hive2-2.1.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/hive2/hive2-jdbc-2.1.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/kafka/kafka-0.10.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/knox/knox-0.9.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/livy/livy-0.2.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/mahout/mahout-0.9.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/mahout/mahout-doc-0.9.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/oozie/oozie-4.2.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/oozie/oozie-client-4.2.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/phoenix/phoenix-4.7.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/pig/pig-0.16.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/ranger/ranger-admin-0.6.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/ranger/ranger-atlas-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/ranger/ranger-hbase-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/ranger/ranger-hdfs-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/ranger/ranger-hive-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/ranger/ranger-kafka-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/ranger/ranger-kms-0.6.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/ranger/ranger-knox-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/ranger/ranger-solr-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/ranger/ranger-storm-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/ranger/ranger-tagsync-0.6.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/ranger/ranger-usersync-0.6.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/ranger/ranger-yarn-plugin-0.6.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/slider/slider-0.91.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/spark/spark-1.6.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/spark/spark-master-1.6.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/spark/spark-python-1.6.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/spark/spark-worker-1.6.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/spark/spark-yarn-shuffle-1.6.2.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/spark2/spark2-2.0.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/spark2/spark2-master-2.0.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/spark2/spark2-python-2.0.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/spark2/spark2-worker-2.0.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/spark2/spark2-yarn-shuffle-2.0.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/sqoop/sqoop-1.4.6.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/sqoop/sqoop-metastore-1.4.6.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/storm/storm-1.0.1.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/storm/storm-slider-client-1.0.1.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/tez/tez-0.7.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/tez_hive2/tez_hive2-0.8.4.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/zeppelin/zeppelin-0.6.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/zookeeper/zookeeper-3.4.6.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading vrpms/zookeeper/zookeeper-server-3.4.6.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading zeppelin/zeppelin_2_5_3_0_37-0.6.0.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading zookeeper/zookeeper_2_5_3_0_37-3.4.6.2.5.3.0-37.el6.noarch.rpm
+Worker 0: reading zookeeper/zookeeper_2_5_3_0_37-server-3.4.6.2.5.3.0-37.el6.noarch.rpm
+Workers Finished
+Saving Primary metadata
+Saving file lists metadata
+Saving other metadata
+Generating sqlite DBs
+Starting other db creation: Wed Jan  3 09:57:25 2018
+Ending other db creation: Wed Jan  3 09:57:25 2018
+Starting filelists db creation: Wed Jan  3 09:57:25 2018
+Ending filelists db creation: Wed Jan  3 09:57:25 2018
+Starting primary db creation: Wed Jan  3 09:57:25 2018
+Ending primary db creation: Wed Jan  3 09:57:25 2018
+Sqlite DBs complete
+
+[root@ip-172-31-12-96 centos7]# createrepo -v /var/www/html/repo/hdp/centos7/HDP-UTILS-1.1.0.21
+Spawning worker 0 with 64 pkgs
+Worker 0: reading R/R-3.2.3-4.el7.x86_64.rpm
+Worker 0: reading R/R-core-3.2.3-4.el7.x86_64.rpm
+Worker 0: reading R/R-core-devel-3.2.3-4.el7.x86_64.rpm
+Worker 0: reading R/R-devel-3.2.3-4.el7.x86_64.rpm
+Worker 0: reading R/R-java-3.2.3-4.el7.x86_64.rpm
+Worker 0: reading R/R-java-devel-3.2.3-4.el7.x86_64.rpm
+Worker 0: reading R/libRmath-3.2.3-4.el7.x86_64.rpm
+Worker 0: reading R/libRmath-devel-3.2.3-4.el7.x86_64.rpm
+Worker 0: reading epel-release-6-8.noarch.rpm
+Worker 0: reading extjs/extjs-2.2-1.noarch.rpm
+Worker 0: reading fping/fping-2.4b2-10.el6.x86_64.rpm
+Worker 0: reading ganglia/ganglia-debuginfo-3.5.0-99.x86_64.rpm
+Worker 0: reading ganglia/ganglia-devel-3.5.0-99.x86_64.rpm
+Worker 0: reading ganglia/ganglia-gmetad-3.5.0-99.x86_64.rpm
+Worker 0: reading ganglia/ganglia-gmond-3.5.0-99.x86_64.rpm
+Worker 0: reading ganglia/ganglia-gmond-modules-python-3.5.0-99.x86_64.rpm
+Worker 0: reading ganglia/ganglia-web-3.5.7-99.noarch.rpm
+Worker 0: reading ganglia/libganglia-3.5.0-99.x86_64.rpm
+Worker 0: reading hadoop-lzo/hadoop-lzo-0.6.0-1.x86_64.rpm
+Worker 0: reading hadoop-lzo/hadoop-lzo-native-0.6.0-1.x86_64.rpm
+Worker 0: reading libconfuse/libconfuse-2.7-4.el6.x86_64.rpm
+Worker 0: reading lucid/lucidworks-hdpsearch-2.3-4.noarch.rpm
+Worker 0: reading lzo/lzo-2.06-1.el6.x86_64.rpm
+Worker 0: reading lzo/lzo-debuginfo-2.06-1.el6.x86_64.rpm
+Worker 0: reading lzo/lzo-devel-2.06-1.el6.x86_64.rpm
+Worker 0: reading lzo/lzo-minilzo-2.06-1.el6.x86_64.rpm
+Worker 0: reading mysql-connector-java/mysql-connector-java-5.1.29-1.noarch.rpm
+Worker 0: reading mysql-connector-java/mysql-connector-java-5.1.37-1.noarch.rpm
+Worker 0: reading mysql/mysql-community-release-el7-5.noarch.rpm
+Worker 0: reading nagios-plugins/nagios-plugins-1.4.9-1.x86_64.rpm
+Worker 0: reading nagios-plugins/nagios-plugins-debuginfo-1.4.9-1.x86_64.rpm
+Worker 0: reading nagios/nagios-3.5.0-99.x86_64.rpm
+Worker 0: reading nagios/nagios-debuginfo-3.5.0-99.x86_64.rpm
+Worker 0: reading nagios/nagios-devel-3.5.0-99.x86_64.rpm
+Worker 0: reading nagios/nagios-www-3.5.0-99.x86_64.rpm
+Worker 0: reading openblas/openblas-0.2.19-4.el7.x86_64.rpm
+Worker 0: reading openblas/openblas-Rblas-0.2.19-4.el7.x86_64.rpm
+Worker 0: reading openblas/openblas-devel-0.2.19-4.el7.x86_64.rpm
+Worker 0: reading openblas/openblas-openmp-0.2.19-4.el7.x86_64.rpm
+Worker 0: reading openblas/openblas-openmp64-0.2.19-4.el7.x86_64.rpm
+Worker 0: reading openblas/openblas-openmp64_-0.2.19-4.el7.x86_64.rpm
+Worker 0: reading openblas/openblas-serial64-0.2.19-4.el7.x86_64.rpm
+Worker 0: reading openblas/openblas-serial64_-0.2.19-4.el7.x86_64.rpm
+Worker 0: reading openblas/openblas-static-0.2.19-4.el7.x86_64.rpm
+Worker 0: reading openblas/openblas-threads-0.2.19-4.el7.x86_64.rpm
+Worker 0: reading openblas/openblas-threads64-0.2.19-4.el7.x86_64.rpm
+Worker 0: reading openblas/openblas-threads64_-0.2.19-4.el7.x86_64.rpm
+Worker 0: reading pdsh/compat-readline5-5.2-17.1.el6.x86_64.rpm
+Worker 0: reading pdsh/libgenders-1.14-2.el6.rf.x86_64.rpm
+Worker 0: reading pdsh/pdsh-2.27-1.el6.rf.x86_64.rpm
+Worker 0: reading perl/perl-Crypt-DES-2.05-9.el6.x86_64.rpm
+Worker 0: reading perl/perl-Net-SNMP-5.2.0-4.el6.noarch.rpm
+Worker 0: reading rrdtool/lua-rrdtool-1.4.5-1.el6.x86_64.rpm
+Worker 0: reading rrdtool/perl-rrdtool-1.4.5-1.el6.x86_64.rpm
+Worker 0: reading rrdtool/python-rrdtool-1.4.5-1.el6.x86_64.rpm
+Worker 0: reading rrdtool/rrdtool-1.4.5-1.el6.x86_64.rpm
+Worker 0: reading rrdtool/rrdtool-debuginfo-1.4.5-1.el6.x86_64.rpm
+Worker 0: reading rrdtool/rrdtool-devel-1.4.5-1.el6.x86_64.rpm
+Worker 0: reading rrdtool/ruby-rrdtool-1.4.5-1.el6.x86_64.rpm
+Worker 0: reading rrdtool/tcl-rrdtool-1.4.5-1.el6.x86_64.rpm
+Worker 0: reading snappy/snappy-1.1.0-3.el7.i686.rpm
+Worker 0: reading snappy/snappy-1.1.0-3.el7.x86_64.rpm
+Worker 0: reading snappy/snappy-devel-1.1.0-3.el7.i686.rpm
+Worker 0: reading snappy/snappy-devel-1.1.0-3.el7.x86_64.rpm
+Workers Finished
+Saving Primary metadata
+Saving file lists metadata
+Saving other metadata
+Generating sqlite DBs
+Starting other db creation: Wed Jan  3 09:58:14 2018
+Ending other db creation: Wed Jan  3 09:58:15 2018
+Starting filelists db creation: Wed Jan  3 09:58:15 2018
+Ending filelists db creation: Wed Jan  3 09:58:15 2018
+Starting primary db creation: Wed Jan  3 09:58:15 2018
+Ending primary db creation: Wed Jan  3 09:58:15 2018
+Sqlite DBs complete
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[root@ip-172-31-12-96 centos7]#

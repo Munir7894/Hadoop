@@ -1,0 +1,149 @@
+[root@ip-172-31-13-128 ~]# ambari-server status
+Using python  /usr/bin/python
+Ambari-server status
+Ambari Server running
+Found Ambari Server PID: 10886 at: /var/run/ambari-server/ambari-server.pid
+
+1# Create a backup of your pg_hba.conf file
+[root@ip-172-31-13-128 ~]# cd /var/lib/pgsql/data/
+[root@ip-172-31-13-128 data]# ls
+base                 pg_hba.conf    pg_notify     pg_subtrans  pg_xlog
+global               pg_ident.conf  pg_serial     pg_tblspc    postgresql.conf
+pg_clog              pg_log         pg_snapshots  pg_twophase  postmaster.opts
+pg_hba_bak.conf.old  pg_multixact   pg_stat_tmp   PG_VERSION   postmaster.pid
+[root@ip-172-31-13-128 data]# cp pg_hba.conf pg_hba.conf.backup
+
+2# On Ambari Server host, stop the original Ambari Server.
+[root@ip-172-31-13-128 data]# ambari-server stop
+Using python  /usr/bin/python
+Stopping ambari-server
+Ambari Server stopped
+
+3# Create a directory to hold the database backups
+[root@ip-172-31-13-128 data]# cd /var/tmp/
+[root@ip-172-31-13-128 tmp]# mkdir dbdumps
+[root@ip-172-31-13-128 tmp]# cd dbdumps/
+[root@ip-172-31-13-128 dbdumps]#
+
+4# Create the database backup
+[root@ip-172-31-13-128 dbdumps]# pg_dump -U ambari -f ambari.sql
+Password:bigdata
+[root@ip-172-31-13-128 dbdumps]#
+
+5# Create a backup of the Ambari Server meta info.
+
+[root@ip-172-31-13-128 dbdumps]# ambari-server backup
+Using python  /usr/bin/python
+Backing up Ambari File System state... *this will not backup the server database*
+Backup requested.
+No path specified. Will use /var/lib/ambari-server/Ambari_State_Backup.zip
+Backup process initiated.
+Creating zip file...
+Zip file created at /var/lib/ambari-server/Ambari_State_Backup.zip
+Backup complete.
+Ambari Server 'backup' completed successfully.
+
+//check backup file /var/lib/ambari-server/Ambari_State_Backup.zip
+
+
+# Backup Ambari Server configuration file
+[root@ip-172-31-13-128 ~]# cp /etc/ambari-server/conf/ambari.properties ambari.properties.backup030118
+
+
+UPDATE repo file in /etc/yum.repos.d/ on each node of the cluster.
+
+vi /etc/yum.repos.d/ambari.repo
+vi /etc/yum.repos.d/HDP.repo
+vi /etc/yum.repos.d/HDP-UTILS.repo
+
+
+# Stop Ambari Server 
+ambari-server stop
+
+# Stop all Ambari Agents. On each host in your cluster running an Ambari Agent:
+ambari-agent stop
+
+# Backup all the databases.
+check for password
+mysql -u root
+mysql -u root -p
+
+
+Backup of all the Databases.
+mysqldump -u root -proot dap > dap_backup03012018.sql
+mysqldump -u root -proot ranger_kms > ranger_kms_backup03012018.sql
+mysqldump -u root -proot ranger_audit > ranger_audit_backup03012018.sql
+mysqldump -u root -proot oozie > oozie_backup03012018.sql
+
+# Backup ambari-env.sh file.
+cp /var/lib/ambari-server/ambari-env.sh ~/
+
+stop the Ambari Metrics service from Ambari Web
+
+Ambari Web browser to Services > Ambari Metrics and select Stop from the Service Actions menu.
+
+
+# Upgrade Ambari Server. On the host running Ambari Server:
+
+[root@ip-172-31-13-128 ~]# yum clean all
+Loaded plugins: amazon-id, rhui-lb, search-disabled-repos
+Cleaning repos: HDP-2.5.3.0 HDP-UTILS-1.1.0.21 ambari-2.5.2.0 rhui-REGION-client-config-server-7 rhui-REGION-rhel-server-releases rhui-REGION-rhel-server-rh-common
+Cleaning up everything
+Maybe you want: rm -rf /var/cache/yum, to also free up space taken by orphaned data from disabled or removed repos
+
+
+[root@ip-172-31-13-128 yum.repos.d]# yum info ambari-server
+
+# Upgrade Ambari Server on Ambari Server Host
+[root@ip-172-31-13-128 yum.repos.d]# yum upgrade ambari-server
+
+# Upgrade Ambari Agent on each ambari agent installed
+[root@ip-172-31-13-128 yum.repos.d]# yum upgrade ambari-agent
+
+
+# Upgrade Ambari Server database schema. On the host running Ambari Server
+[root@ip-172-31-13-128 yum.repos.d]# ambari-server upgrade
+
+# Start the Ambari Server
+[root@ip-172-31-13-128 yum.repos.d]# ambari-server start
+
+# Start all Ambari Agents. On each host in your cluster running an Ambari Agent
+[root@ip-172-31-13-128 yum.repos.d]# ambari-agent start
+
+# Upgrading Ambari Metrics
+[root@ip-172-31-13-128 java]#  yum upgrade ambari-metrics-collector
+[root@ip-172-31-13-128 java]#  ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
+
+#Stop Ambari Metrics Service
+Ambari Web --> Ambari Metrics --> Service Actions --> Stop.
+ 
+# On each host running Metrics Monitor.
+[root@ip-172-31-13-128 ~]# yum upgrade ambari-metrics-monitor ambari-metrics-hadoop-sink
+
+# Execute following command on all hosts running Metrics Collector
+[root@ip-172-31-9-255 ~]# yum upgrade ambari-metrics-collector
+
+# Execute following command on all hosts running Grafana 
+[root@ip-172-31-9-255 ~]# yum upgrade ambari-metrics-grafana
+
+# Start Ambari Metrics Service
+Ambari Web --> Ambari Metrics --> Service Actions --> Start
+
+## Upgrade Smartsense
+
+# Stop SmartSense Service
+
+# Upgrade binaries on the HST server and all HST agents on every node in the cluster
+[root@ip-172-31-9-255 ~]# yum clean all
+[root@ip-172-31-9-255 ~]# yum info smartsense-hst
+
+In the info output, visually validate that there is an available version containing "1.4.0”
+
+[root@ip-172-31-9-255 ~]# yum upgrade smartsense-hst
+
+[root@ip-172-31-13-128 ~]# hst upgrade-ambari-service
+
+[root@ip-172-31-13-128 ~]# ambari-server restart
+
+# Start SmartSense Service
+
